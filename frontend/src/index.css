@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+    /* Colors */
+    --color-canvas: #F7F8FA;
+    --color-surface: #FFFFFF;
+
+    --color-primary: #4F46E5;
+    --color-primary-hover: #4338CA;
+    --color-primary-light: #E0E7FF;
+
+    --color-secondary: #14B8A6;
+    --color-secondary-hover: #0D9488;
+    --color-secondary-light: #CCFBF1;
+
+    --color-text-main: #111827;
+    --color-text-body: #374151;
+    --color-text-muted: #6B7280;
+
+    --color-border: #E5E7EB;
+    --color-border-light: #F3F4F6;
+
+    --color-status-success: #10B981;
+    --color-status-error: #EF4444;
+    --color-status-warning: #F59E0B;
+    --color-status-info: #3B82F6;
+
+    /* Typography */
+    --font-sans: 'Inter', system-ui, sans-serif;
+
+    /* Radius */
+    --radius-xl: 1rem;
+    --radius-2xl: 1.25rem;
+
+    /* Shadows */
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+@layer base {
+    body {
+        @apply bg-canvas text-text-body antialiased;
+        font-family: var(--font-sans);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply text-text-main font-semibold;
+    }
+}
+
+@layer utilities {
+    .clip-circle {
+        clip-path: circle(50% at 50% 50%);
+    }
+}
