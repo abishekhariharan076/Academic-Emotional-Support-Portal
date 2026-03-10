@@ -6,15 +6,24 @@ exports.getAllCheckIns = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK ALL CHECK-INS (DB disconnected)");
       return res.json([
-        { _id: "m1", userId: { name: "Alice Student", email: "alice@test.com" }, moodLevel: 80, message: "Feeling great!", status: "open", createdAt: new Date(Date.now() - 86400000) },
-        { _id: "m2", userId: { name: "John Doe", email: "john@test.com" }, moodLevel: 30, message: "Struggling with exams.", status: "open", createdAt: new Date(Date.now() - 43200000) },
+        { _id: "m1", userId: { name: "Alice Student", email: "alice@test.com" }, moodLevel: 4, message: "Feeling steady.", status: "open", anonymous: false, createdAt: new Date(Date.now() - 86400000) },
+        { _id: "m2", userId: null, moodLevel: 2, message: "Stress is high.", status: "open", anonymous: true, createdAt: new Date(Date.now() - 43200000) },
       ]);
     }
     const checkIns = await CheckIn.find()
       .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
-    res.json(checkIns);
+    // Map to hide user details if anonymous
+    const sanitizedCheckIns = checkIns.map(c => {
+      const entry = c.toObject();
+      if (entry.anonymous) {
+        entry.userId = { name: "Anonymous Student", email: "hidden@aesp.org" };
+      }
+      return entry;
+    });
+
+    res.json(sanitizedCheckIns);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

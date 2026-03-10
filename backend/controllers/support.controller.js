@@ -43,7 +43,7 @@ exports.getMySupportRequests = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK MY SUPPORT (DB disconnected)");
       return res.json([
-        { _id: "s_me", subject: "My test request", message: "Is this working?", status: "pending", createdAt: new Date() },
+        { _id: "s_me", studentId: req.user.id, subject: "Question about mood trends", message: "Why is it flat?", status: "pending", createdAt: new Date() },
       ]);
     }
     const list = await SupportRequest.find({ studentId: req.user.id })
@@ -61,14 +61,23 @@ exports.getAllSupportRequests = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK ALL SUPPORT (DB disconnected)");
       return res.json([
-        { _id: "s1", studentId: { name: "Alice Student", email: "alice@test.com" }, subject: "Stressed about projects", message: "Hard to focus.", status: "pending", createdAt: new Date() },
+        { _id: "s1", studentId: { name: "Alice Student", email: "alice@test.com" }, subject: "Stressed about projects", message: "Hard to focus.", status: "pending", anonymous: false, createdAt: new Date() },
+        { _id: "s2", studentId: null, subject: "Personal Issue", message: "Need someone to talk to.", status: "pending", anonymous: true, createdAt: new Date() },
       ]);
     }
     const list = await SupportRequest.find()
       .populate("studentId", "name email")
       .sort({ createdAt: -1 });
 
-    res.json(list);
+    const sanitizedList = list.map(req => {
+      const entry = req.toObject();
+      if (entry.anonymous) {
+        entry.studentId = { name: "Anonymous Student", email: "hidden@aesp.org" };
+      }
+      return entry;
+    });
+
+    res.json(sanitizedList);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

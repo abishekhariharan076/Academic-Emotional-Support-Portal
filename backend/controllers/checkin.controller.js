@@ -46,8 +46,8 @@ exports.getMyCheckIns = async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK LIST (DB disconnected)");
       return res.json([
-        { _id: "m1", moodLevel: 80, message: "Feeling great!", createdAt: new Date(Date.now() - 86400000) },
-        { _id: "m2", moodLevel: 60, message: "A bit tired.", createdAt: new Date(Date.now() - 172800000) },
+        { _id: "m1", userId: req.user.id, moodLevel: 4, message: "Feeling steady today.", createdAt: new Date(Date.now() - 86400000) },
+        { _id: "m2", userId: req.user.id, moodLevel: 3, message: "A bit overwhelmed.", createdAt: new Date(Date.now() - 172800000) },
       ]);
     }
     const checkIns = await CheckIn.find({ userId: req.user.id }).sort({
