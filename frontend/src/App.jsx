@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Landing from "./pages/Landing";
 import StudentDashboard from "./pages/StudentDashboard";
 import CheckIn from "./pages/CheckIn";
 import CounselorDashboard from "./pages/CounselorDashboard";
@@ -10,21 +12,6 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import SupportRequest from "./pages/SupportRequest";
 import Resources from "./pages/Resources";
-
-
-function RoleRedirect() {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-
-  if (!token || !user) return <Navigate to="/login" replace />;
-
-  if (user.role === "counselor") return <Navigate to="/counselor" replace />;
-  if (user.role === "admin") return <Navigate to="/admin" replace />;
-  return <Navigate to="/student" replace />;
-}
-
-import Layout from "./components/Layout";
-
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import CheckInHistory from "./pages/CheckInHistory";
