@@ -113,3 +113,47 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+const { OAuth2Client } = require("google-auth-library");
+// Initialize with a fallback to prevent crash if env var is missing during startup
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-id");
+
+exports.googleLogin = async (req, res) => {
+  const { tokenId } = req.body;
+
+  if (!tokenId) {
+    return res.status(400).json({ message: "tokenId is required" });
+  }
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { name, email, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if not exists
+      user = await User.create({
+        name,
+        email,
+        password: await bcrypt.hash(Math.random().toString(36).slice(-10), 10), // Random password
+        role: "student", // Default role
+      });
+      console.log(`New user created via Google: ${email}`);
+    }
+
+    const token = signToken(user);
+
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, picture },
+    });
+  } catch (err) {
+    console.error("Google Login Error:", err.message);
+    res.status(401).json({ message: "Google authentication failed", error: err.message });
+  }
+};

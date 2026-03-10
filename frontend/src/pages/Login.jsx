@@ -4,6 +4,7 @@ import { api } from "../services/api";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Card from "../components/Card";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -39,6 +40,26 @@ export default function Login() {
       } else {
         setMsg(err?.response?.data?.message || "Login failed. Please check your credentials.");
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (response) => {
+    setLoading(true);
+    setMsg("");
+    try {
+      const res = await api.post("/auth/google", { tokenId: response.credential });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      const role = res.data.user?.role;
+      if (role === "counselor") navigate("/counselor");
+      else if (role === "admin") navigate("/admin");
+      else navigate("/student");
+    } catch (err) {
+      console.error("Google Login Error:", err);
+      setMsg(err?.response?.data?.message || "Google login failed.");
     } finally {
       setLoading(false);
     }
@@ -103,6 +124,27 @@ export default function Login() {
           >
             {loading ? "Signing in..." : "Sign in"}
           </Button>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-canvas px-2 text-text-muted">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setMsg("Google Login Failed")}
+              useOneTap
+              theme="outline"
+              shape="pill"
+              size="large"
+              width="360"
+            />
+          </div>
 
           <p className="text-center text-sm text-text-muted">
             Don't have an account?{" "}
