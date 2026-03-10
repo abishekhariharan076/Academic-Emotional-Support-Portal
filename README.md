@@ -103,6 +103,8 @@ Student Login
 * Resource access section
 * Analytics dashboard
 * Status tracking for requests
+* **Real-time Live Chat**: Instant messaging between students and counselors using Socket.io.
+* **Domain-Based Filtering**: Institutional isolation ensuring users only chat with others from their own email domain (e.g., `@bitsathy.ac.in`).
 
 ---
 
