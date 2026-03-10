@@ -104,7 +104,10 @@ export default function Login() {
               autoComplete="current-password"
             />
             <div className="flex justify-end mt-1">
-              <Link to="/forgot-password" className="text-xs font-medium text-primary hover:text-primary-hover">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:text-primary-hover"
+              >
                 Forgot password?
               </Link>
             </div>

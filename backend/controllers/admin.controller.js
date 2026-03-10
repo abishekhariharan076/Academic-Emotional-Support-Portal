@@ -68,7 +68,12 @@ exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Prevent self-deletion if needed (optional but recommended)
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Proceeding with MOCK DELETE USER for ${id} (DB disconnected)`);
+      return res.json({ message: "User successfully removed (Mock Mode)" });
+    }
+
+    // Prevent self-deletion
     if (id === req.user.id) {
       return res.status(400).json({ message: "You cannot delete your own admin account." });
     }
@@ -80,6 +85,36 @@ exports.deleteUser = async (req, res) => {
     }
 
     res.json({ message: "User successfully removed" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!["student", "counselor", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Proceeding with MOCK UPDATE ROLE for ${id} to ${role} (DB disconnected)`);
+      return res.json({ message: `User role updated to ${role} (Mock Mode)` });
+    }
+
+    if (id === req.user.id && role !== "admin") {
+      return res.status(400).json({ message: "You cannot demote yourself from admin." });
+    }
+
+    const user = await User.findByIdAndUpdate(id, { role }, { new: true }).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

@@ -93,7 +93,7 @@ export default function StudentDashboard() {
               </div>
             </div>
           </div>
-          <Link to="/checkin" className="text-sm font-medium text-primary hover:text-primary-hover">
+          <Link to="/checkin/history" className="text-sm font-medium text-primary hover:text-primary-hover">
             View History &rarr;
           </Link>
         </Card>
@@ -130,9 +130,9 @@ export default function StudentDashboard() {
               ))}
             </div>
           </div>
-          <span className="text-sm font-medium text-primary cursor-pointer hover:text-primary-hover">
+          <Link to="/resources" className="text-sm font-medium text-primary cursor-pointer hover:text-primary-hover">
             Browse Library &rarr;
-          </span>
+          </Link>
         </Card>
       </div>
 
@@ -142,7 +142,7 @@ export default function StudentDashboard() {
         <div className="lg:col-span-1 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-text-main">Recent Check-Ins</h2>
-            <Link to="/checkin" className="text-sm font-medium text-primary hover:text-primary-hover">View all</Link>
+            <Link to="/checkin/history" className="text-sm font-medium text-primary hover:text-primary-hover">View all</Link>
           </div>
 
           <div className="space-y-4">

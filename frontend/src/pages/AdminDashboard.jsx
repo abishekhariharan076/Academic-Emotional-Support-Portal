@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { api } from "../services/api";
+import Card from "../components/Card";
+import Button from "../components/Button";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ export default function AdminDashboard() {
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -22,13 +25,14 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     setLoadingStats(true);
     setMsg("");
+    setError("");
     try {
       const res = await api.get("/admin/stats", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setStats(res.data);
     } catch (err) {
-      setMsg(err?.response?.data?.message || "Failed to load admin stats");
+      setError(err?.response?.data?.message || "Failed to load admin stats");
     } finally {
       setLoadingStats(false);
     }
@@ -37,13 +41,14 @@ export default function AdminDashboard() {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     setMsg("");
+    setError("");
     try {
       const res = await api.get("/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data);
     } catch (err) {
-      setMsg(err?.response?.data?.message || "Failed to load users");
+      setError(err?.response?.data?.message || "Failed to load users");
     } finally {
       setLoadingUsers(false);
     }
@@ -53,15 +58,31 @@ export default function AdminDashboard() {
     if (!window.confirm("Are you sure you want to remove this user? This action cannot be undone.")) return;
 
     setMsg("");
+    setError("");
     try {
       await api.delete(`/admin/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Refresh both stats and users after deletion
+      setMsg("User removed successfully.");
       fetchStats();
       fetchUsers();
     } catch (err) {
-      setMsg(err?.response?.data?.message || "Failed to remove user");
+      setError(err?.response?.data?.message || "Failed to remove user");
+    }
+  };
+
+  const handleUpdateRole = async (id, newRole) => {
+    setMsg("");
+    setError("");
+    try {
+      await api.patch(`/admin/users/${id}/role`, { role: newRole }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMsg(`User role updated to ${newRole}.`);
+      fetchStats();
+      fetchUsers();
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to update role");
     }
   };
 
@@ -72,142 +93,157 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="border-b border-slate-800">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">AESP</h1>
-            <p className="text-sm text-slate-400">
-              Admin Dashboard • Welcome, {user?.name || "Admin"}
-            </p>
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => {
-                fetchStats();
-                fetchUsers();
-              }}
-              className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-900"
-            >
-              Refresh
-            </button>
-            <button
-              onClick={logout}
-              className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-900"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-3">
-        {/* Stats */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
-            <h2 className="text-base font-semibold">System Stats</h2>
-            <p className="mt-1 text-sm text-slate-400">
-              High-level overview of portal activity.
-            </p>
-
-            {loadingStats && (
-              <p className="mt-4 text-sm text-slate-400">Loading stats…</p>
-            )}
-
-            {!loadingStats && stats && (
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                  <p className="text-xs text-slate-400">Total Users</p>
-                  <p className="mt-1 text-2xl font-bold">{stats.users.total}</p>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Students: {stats.users.students} • Counselors:{" "}
-                    {stats.users.counselors} • Admins: {stats.users.admins}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                  <p className="text-xs text-slate-400">Total Check-ins</p>
-                  <p className="mt-1 text-2xl font-bold">{stats.checkIns.total}</p>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Open: {stats.checkIns.open} • Reviewed: {stats.checkIns.reviewed}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                  <p className="text-xs text-slate-400">Last 7 days</p>
-                  <p className="mt-1 text-2xl font-bold">{stats.checkIns.last7Days}</p>
-                  <p className="mt-2 text-xs text-slate-500">Recent check-ins</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {msg && (
-            <div className="rounded-2xl border border-red-900/40 bg-red-950/40 p-4 text-sm text-red-200">
-              {msg}
+    <div className="min-h-screen bg-canvas text-text-main pb-12">
+      {/* Header */}
+      <header className="border-b border-border-light bg-surface/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-bold text-lg">
+              AE
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight">Admin Dashboard</h1>
+              <p className="text-xs text-text-muted">Welcome, {user?.name || "Admin"}</p>
             </div>
-          )}
+          </div>
+
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={() => { fetchStats(); fetchUsers(); }}>
+              Refresh
+            </Button>
+            <Button variant="outline" size="sm" onClick={logout}>
+              Logout
+            </Button>
+          </div>
         </div>
+      </header>
 
-        {/* Users */}
-        <div className="lg:col-span-2">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 shadow-sm">
-            <h2 className="text-base font-semibold">Users</h2>
-            <p className="mt-1 text-xs text-slate-400">
-              All registered accounts (password hidden).
-            </p>
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        {/* Alerts */}
+        {msg && (
+          <div className="mb-6 p-4 bg-status-success/10 text-status-success rounded-xl font-medium border border-status-success/20 animate-in fade-in slide-in-from-top-2">
+            {msg}
+          </div>
+        )}
+        {error && (
+          <div className="mb-6 p-4 bg-status-error/10 text-status-error rounded-xl font-medium border border-status-error/20 animate-in fade-in slide-in-from-top-2">
+            {error}
+          </div>
+        )}
 
-            {loadingUsers && (
-              <p className="mt-4 text-sm text-slate-400">Loading users…</p>
-            )}
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Stats Section */}
+          <div className="lg:col-span-1 space-y-6">
+            <Card>
+              <h2 className="text-lg font-bold mb-1">System Overview</h2>
+              <p className="text-sm text-text-body mb-6">Real-time platform metrics</p>
 
-            {!loadingUsers && users.length === 0 && (
-              <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                <p className="text-sm text-slate-300">No users found.</p>
-              </div>
-            )}
-
-            <div className="mt-4 grid gap-3">
-              {users.map((u) => (
-                <div
-                  key={u._id}
-                  className="rounded-xl border border-slate-800 bg-slate-950/40 p-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-semibold text-slate-200">
-                        {u.name || "Unnamed"}
-                      </p>
-                      <p className="text-xs text-slate-400">{u.email}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300">
-                        {u.role}
-                      </span>
-                      {u._id !== user?.id && (
-                        <button
-                          onClick={() => handleDeleteUser(u._id)}
-                          className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors"
-                        >
-                          Remove
-                        </button>
-                      )}
+              {loadingStats ? (
+                <div className="space-y-4 animate-pulse">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-24 bg-canvas rounded-xl"></div>
+                  ))}
+                </div>
+              ) : stats ? (
+                <div className="grid gap-4">
+                  <div className="bg-canvas border border-border-light p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Total Users</p>
+                    <p className="text-3xl font-bold mt-1">{stats.users.total}</p>
+                    <div className="flex gap-2 mt-2 text-xs text-text-body">
+                      <span>{stats.users.students} Students</span>
+                      <span className="text-border-light">•</span>
+                      <span>{stats.users.counselors} Counselors</span>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
 
-            <div className="mt-6 rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-              <p className="text-xs font-semibold text-slate-300">Next upgrades</p>
-              <p className="mt-1 text-xs text-slate-400">
-                Add admin actions: change roles, disable accounts, export reports.
-              </p>
-            </div>
+                  <div className="bg-canvas border border-border-light p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Check-ins</p>
+                    <p className="text-3xl font-bold mt-1">{stats.checkIns.total}</p>
+                    <p className="text-xs text-text-body mt-2">
+                      {stats.checkIns.open} pending review
+                    </p>
+                  </div>
+
+                  <div className="bg-canvas border border-border-light p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Weekly Activity</p>
+                    <p className="text-3xl font-bold mt-1">{stats.checkIns.last7Days}</p>
+                    <p className="text-xs text-text-body mt-2">New requests this week</p>
+                  </div>
+                </div>
+              ) : null}
+            </Card>
+          </div>
+
+          {/* User Management Section */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-bold">User Management</h2>
+                  <p className="text-sm text-text-body">Manage account access and roles</p>
+                </div>
+                <div className="text-xs font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
+                  {users.length} Users Found
+                </div>
+              </div>
+
+              {loadingUsers ? (
+                <div className="space-y-4">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-20 bg-canvas rounded-xl animate-pulse"></div>
+                  ))}
+                </div>
+              ) : users.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-border-light rounded-2xl">
+                  <p className="text-text-muted">No users found in the system.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border-light">
+                  {users.map((u) => (
+                    <div key={u._id} className="py-4 first:pt-0 last:pb-0">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold">
+                            {u.name?.charAt(0) || "U"}
+                          </div>
+                          <div>
+                            <p className="font-bold text-text-main leading-none mb-1">{u.name || "Unnamed User"}</p>
+                            <p className="text-xs text-text-body">{u.email}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 ml-auto">
+                          <select
+                            value={u.role}
+                            onChange={(e) => handleUpdateRole(u._id, e.target.value)}
+                            disabled={u._id === user?.id}
+                            className="text-xs font-semibold bg-canvas border border-border-light rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:opacity-50"
+                          >
+                            <option value="student">Student</option>
+                            <option value="counselor">Counselor</option>
+                            <option value="admin">Admin</option>
+                          </select>
+
+                          {u._id !== user?.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-status-error hover:bg-status-error/5"
+                              onClick={() => handleDeleteUser(u._id)}
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

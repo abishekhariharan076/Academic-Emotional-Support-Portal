@@ -18,5 +18,7 @@ const loginValidation = [
 router.post("/register", registerValidation, authController.register);
 router.post("/login", loginValidation, authController.login);
 router.post("/google", authController.googleLogin);
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/reset-password", authController.resetPassword);
 
 module.exports = router;

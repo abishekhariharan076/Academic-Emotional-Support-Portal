@@ -25,7 +25,9 @@ function RoleRedirect() {
 
 import Layout from "./components/Layout";
 
-import Landing from "./pages/Landing";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import CheckInHistory from "./pages/CheckInHistory";
 
 export default function App() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
       {/* Public Auth */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protected App Shell */}
       <Route element={<Layout />}>
@@ -53,6 +57,14 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["student"]}>
               <CheckIn />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkin/history"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <CheckInHistory />
             </ProtectedRoute>
           }
         />
