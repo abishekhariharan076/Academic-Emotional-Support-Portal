@@ -49,6 +49,22 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (id) => {
+    if (!window.confirm("Are you sure you want to remove this user? This action cannot be undone.")) return;
+
+    setMsg("");
+    try {
+      await api.delete(`/admin/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Refresh both stats and users after deletion
+      fetchStats();
+      fetchUsers();
+    } catch (err) {
+      setMsg(err?.response?.data?.message || "Failed to remove user");
+    }
+  };
+
   useEffect(() => {
     fetchStats();
     fetchUsers();
@@ -165,9 +181,19 @@ export default function AdminDashboard() {
                       </p>
                       <p className="text-xs text-slate-400">{u.email}</p>
                     </div>
-                    <span className="rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300">
-                      {u.role}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300">
+                        {u.role}
+                      </span>
+                      {u._id !== user?.id && (
+                        <button
+                          onClick={() => handleDeleteUser(u._id)}
+                          className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

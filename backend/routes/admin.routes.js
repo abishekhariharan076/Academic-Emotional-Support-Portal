@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const auth = require("../middleware/auth.middleware");
 const role = require("../middleware/role.middleware");
-const { getStats, getUsers } = require("../controllers/admin.controller");
+const { getStats, getUsers, deleteUser } = require("../controllers/admin.controller");
 
 router.get("/stats", auth, role(["admin"]), getStats);
 router.get("/users", auth, role(["admin"]), getUsers);
+router.delete("/users/:id", auth, role(["admin"]), deleteUser);
 
 module.exports = router;

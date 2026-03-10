@@ -34,7 +34,11 @@ export default function Login() {
       else navigate("/student");
     } catch (err) {
       console.error("Full Login Error:", err);
-      setMsg(err?.response?.data?.message || "Login failed. Please check your connection or credentials.");
+      if (!err.response) {
+        setMsg("Server is unreachable. Please ensure the backend is running.");
+      } else {
+        setMsg(err?.response?.data?.message || "Login failed. Please check your credentials.");
+      }
     } finally {
       setLoading(false);
     }
