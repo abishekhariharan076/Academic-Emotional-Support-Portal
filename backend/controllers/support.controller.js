@@ -89,6 +89,18 @@ exports.respondToSupportRequest = async (req, res) => {
     const { id } = req.params;
     const { counselorReply } = req.body;
 
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Proceeding with MOCK SUPPORT RESPOND for ${id} (DB disconnected)`);
+      return res.json({
+        _id: id,
+        status: "responded",
+        counselorId: req.user.id,
+        counselorReply: (counselorReply || "").trim(),
+        respondedAt: new Date(),
+        message: "Response saved in Mock Mode"
+      });
+    }
+
     const doc = await SupportRequest.findById(id);
     if (!doc) return res.status(404).json({ message: "Support request not found" });
 
@@ -108,6 +120,12 @@ exports.respondToSupportRequest = async (req, res) => {
 exports.deleteSupportRequest = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Proceeding with MOCK DELETE SUPPORT for ${id} (DB disconnected)`);
+      return res.json({ message: "Request deleted successfully (Mock Mode)" });
+    }
+
     const request = await SupportRequest.findById(id);
 
     if (!request) {

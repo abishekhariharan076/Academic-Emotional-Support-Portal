@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
 import MoodTrendChart from "../components/MoodTrendChart";
+import Chat from "../components/Chat";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -202,6 +203,7 @@ export default function StudentDashboard() {
           </Card>
         </div>
       </div>
+      <Chat currentUser={user} />
     </div>
   );
 }

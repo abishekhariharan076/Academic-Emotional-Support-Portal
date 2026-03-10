@@ -9,9 +9,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (!error.response) {
-      console.error("Network Error: Could not reach the server. Is the backend running?");
+      console.error(`Network Error: Could not reach the server at ${api.defaults.baseURL}. Is the backend running?`);
     } else {
-      console.error(`API Error (${error.response.status}):`, error.response.data);
+      console.error(`API Error (${error.response.status}) at ${api.defaults.baseURL}:`, error.response.data);
     }
     return Promise.reject(error);
   }

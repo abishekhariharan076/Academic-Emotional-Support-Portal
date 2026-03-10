@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
 import NotifBadge from "../components/NotifBadge";
+import Chat from "../components/Chat";
 
 export default function CounselorDashboard() {
   const navigate = useNavigate();
@@ -202,6 +203,7 @@ export default function CounselorDashboard() {
           </Card>
         </div>
       </div>
+      <Chat currentUser={user} />
     </div>
   );
 }

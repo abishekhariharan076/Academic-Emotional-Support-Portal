@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -15,6 +17,13 @@ const supportRoutes = require("./routes/support.routes");
 require("dotenv").config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Adjust for production
+    methods: ["GET", "POST"]
+  }
+});
 
 // middleware
 app.use(cors());
@@ -71,8 +80,28 @@ mongoose
     console.log("Proceeding without MongoDB connection for now...");
   });
 
+// Socket.io logic
+io.on("connection", (socket) => {
+  console.log("A user connected: ", socket.id);
+
+  socket.on("join-room", (roomId) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room ${roomId}`);
+  });
+
+  socket.on("send-message", (data) => {
+    // data: { roomId, sender, message, timestamp }
+    io.to(data.roomId).emit("receive-message", data);
+    console.log(`Message in ${data.roomId} from ${data.sender}: ${data.message}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected: ", socket.id);
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 console.log(`Starting server on port ${PORT}...`);
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT} 🚀`);
 });
