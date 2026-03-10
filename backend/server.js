@@ -39,8 +39,9 @@ const limiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 login/register attempts per hour
+  max: 50, // Increased limit for testing/reliability
   message: { message: "Too many authentication attempts, please try again in an hour." },
+  skip: (req) => req.method === "OPTIONS", // Don't limit preflight requests
 });
 
 app.use("/api", limiter);

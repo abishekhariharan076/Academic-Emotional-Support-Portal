@@ -69,7 +69,7 @@ export default function StudentDashboard() {
             <Button>New Check-In</Button>
           </Link>
           <Link to="/support">
-            <Button variant="secondary" className="bg-white text-text-body border border-border-light hover:bg-gray-50">
+            <Button variant="secondary">
               Create Support Request
             </Button>
           </Link>

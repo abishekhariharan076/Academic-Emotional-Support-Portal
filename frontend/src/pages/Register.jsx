@@ -29,7 +29,13 @@ export default function Register() {
       else if (r === "admin") navigate("/admin");
       else navigate("/student");
     } catch (err) {
-      setMsg(err?.response?.data?.message || "Registration failed. Please try again.");
+      console.error("Full Registration Error:", err);
+      const errorData = err?.response?.data;
+      if (errorData?.errors) {
+        setMsg(errorData.errors.map((e) => e.msg).join(". "));
+      } else {
+        setMsg(errorData?.message || "Registration failed. Please check your connection or backend URL.");
+      }
     } finally {
       setLoading(false);
     }

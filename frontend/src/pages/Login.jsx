@@ -33,7 +33,8 @@ export default function Login() {
       else if (role === "admin") navigate("/admin");
       else navigate("/student");
     } catch (err) {
-      setMsg(err?.response?.data?.message || "Login failed. Please check your credentials.");
+      console.error("Full Login Error:", err);
+      setMsg(err?.response?.data?.message || "Login failed. Please check your connection or credentials.");
     } finally {
       setLoading(false);
     }
