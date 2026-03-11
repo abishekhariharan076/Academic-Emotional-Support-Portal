@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const CheckIn = require("../models/CheckIn");
+const User = require("../models/User");
 
 exports.getAllCheckIns = async (req, res) => {
   try {
@@ -62,6 +63,53 @@ exports.reviewCheckIn = async (req, res) => {
 
     // return updated document
     res.json(checkIn);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.getStudents = async (req, res) => {
+  try {
+    const counselorDomain = req.user.email.split("@")[1];
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK STUDENTS (DB disconnected)");
+      return res.json([
+        { _id: "s1", name: "Alice Student", email: `alice@${counselorDomain}` },
+        { _id: "s2", name: "Bob Student", email: `bob@${counselorDomain}` },
+        { _id: "s3", name: "Charlie Student", email: `charlie@${counselorDomain}` },
+      ]);
+    }
+
+    const students = await User.find({
+      role: "student",
+      email: { $regex: `@${counselorDomain}$` }
+    }).select("name email");
+
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.getCounselors = async (req, res) => {
+  try {
+    const studentDomain = req.user.email.split("@")[1];
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK COUNSELORS (DB disconnected)");
+      return res.json([
+        { _id: "c1", name: "Bob Counselor", email: `bob@${studentDomain}` },
+        { _id: "c2", name: "Dave Counselor", email: `dave@${studentDomain}` },
+      ]);
+    }
+
+    const counselors = await User.find({
+      role: "counselor",
+      email: { $regex: `@${studentDomain}$` }
+    }).select("name email");
+
+    res.json(counselors);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

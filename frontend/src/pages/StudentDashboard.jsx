@@ -13,17 +13,21 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [checkIns, setCheckIns] = useState([]);
   const [support, setSupport] = useState([]);
+  const [counselors, setCounselors] = useState([]);
+  const [activeRecipient, setActiveRecipient] = useState(null);
 
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const token = localStorage.getItem("token");
-        const [checkInsRes, supportRes] = await Promise.all([
+        const [checkInsRes, supportRes, counselorRes] = await Promise.all([
           api.get("/checkins/my", { headers: { Authorization: `Bearer ${token}` } }),
           api.get("/support/my", { headers: { Authorization: `Bearer ${token}` } }),
+          api.get("/counselor/all", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
         setCheckIns(checkInsRes.data || []);
         setSupport(supportRes.data || []);
+        setCounselors(counselorRes.data || []);
       } catch (e) {
         console.error("Failed to fetch dashboard data");
       } finally {
@@ -137,8 +141,7 @@ export default function StudentDashboard() {
         </Card>
       </div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Timeline */}
         <div className="lg:col-span-1 space-y-6">
           <div className="flex items-center justify-between">
@@ -176,10 +179,37 @@ export default function StudentDashboard() {
               ))
             )}
           </div>
+
+          <Card className="mt-6">
+            <h2 className="text-sm font-bold text-text-main mb-4 uppercase tracking-wider">Your Counselors</h2>
+            <div className="space-y-3">
+              {counselors.length === 0 ? (
+                <p className="text-xs text-text-muted">No counselors available.</p>
+              ) : (
+                counselors.map(c => (
+                  <div
+                    key={c._id}
+                    className="flex items-center justify-between group cursor-pointer"
+                    onClick={() => setActiveRecipient(c)}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-text-main truncate group-hover:text-primary transition-colors">{c.name}</p>
+                      <p className="text-[10px] text-text-muted">Available for support</p>
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
         </div>
 
         {/* Chart */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <Card className="h-full min-h-[400px]">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -203,7 +233,7 @@ export default function StudentDashboard() {
           </Card>
         </div>
       </div>
-      <Chat currentUser={user} />
+      <Chat currentUser={user} recipient={activeRecipient} />
     </div>
   );
 }

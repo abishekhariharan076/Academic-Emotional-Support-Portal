@@ -6,20 +6,33 @@ import Input from "./Input";
 
 const socket = io(import.meta.env.VITE_API_URL.replace("/api", "") || "http://localhost:5000");
 
-export default function Chat({ currentUser }) {
+export default function Chat({ currentUser, recipient }) {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const messagesEndRef = useRef(null);
 
-    // Domain-based filtering: Users only see messages from their own institution/domain
+    // Dynamic room naming: Institutional or Private
     const email = currentUser?.email || "";
     const domain = email.includes("@") ? email.split("@")[1] : "global";
-    const room = `chat_${domain}`;
+
+    const room = useMemo(() => {
+        if (!recipient) return `chat_${domain}`;
+        // Consistent private room naming: private_minID_maxID
+        const ids = [currentUser?._id, recipient._id].sort();
+        return `private_${ids[0]}_${ids[1]}`;
+    }, [currentUser, recipient, domain]);
+
+    useEffect(() => {
+        if (recipient) {
+            setIsOpen(true);
+        }
+    }, [recipient]);
 
     useEffect(() => {
         if (!room) return;
 
+        setMessages([]); // Clear messages when switching rooms
         console.log(`Joining chat room: ${room}`);
         socket.emit("join-room", room);
 
@@ -30,7 +43,7 @@ export default function Chat({ currentUser }) {
         return () => {
             socket.off("receive-message");
         };
-    }, []);
+    }, [room]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -71,7 +84,9 @@ export default function Chat({ currentUser }) {
                 <div className="bg-primary p-4 text-white flex justify-between items-center shrink-0">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <h3 className="font-semibold text-sm uppercase tracking-wider">Live Support</h3>
+                        <h3 className="font-semibold text-sm uppercase tracking-wider">
+                            {recipient ? `Chat with ${recipient.name}` : "Institutional Chat"}
+                        </h3>
                     </div>
                     <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded-lg transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -83,7 +98,10 @@ export default function Chat({ currentUser }) {
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
                     {messages.length === 0 && (
                         <p className="text-center text-slate-400 text-sm py-10 italic">
-                            Questions? We're here to help in real-time.
+                            {recipient
+                                ? `Start a private conversation with ${recipient.name}.`
+                                : "Questions? We're here to help in real-time."
+                            }
                         </p>
                     )}
                     {messages.map((msg, i) => (

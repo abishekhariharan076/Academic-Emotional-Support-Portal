@@ -14,6 +14,8 @@ export default function CounselorDashboard() {
 
   const [checkIns, setCheckIns] = useState([]);
   const [support, setSupport] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [activeRecipient, setActiveRecipient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState({});
   const [msg, setMsg] = useState("");
@@ -21,13 +23,15 @@ export default function CounselorDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [checkRes, supportRes] = await Promise.all([
+      const [checkRes, supportRes, studentRes] = await Promise.all([
         api.get("/counselor/checkins", { headers: { Authorization: `Bearer ${token}` } }),
         api.get("/support", { headers: { Authorization: `Bearer ${token}` } }),
+        api.get("/counselor/students", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
       setCheckIns(checkRes.data || []);
       setSupport(supportRes.data || []);
+      setStudents(studentRes.data || []);
 
       // Initialize notes
       const initialNotes = {};
@@ -183,8 +187,38 @@ export default function CounselorDashboard() {
           )}
         </div>
 
-        {/* Sidebar: Guidelines */}
+        {/* Sidebar: Guidelines & Student List */}
         <div className="space-y-6">
+          <Card className="max-h-[400px] flex flex-col">
+            <h3 className="font-bold text-text-main mb-3 flex items-center justify-between">
+              Your Students
+              <Badge variant="secondary">{students.length}</Badge>
+            </h3>
+            <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+              {students.length === 0 ? (
+                <p className="text-xs text-text-muted italic">No students found in your domain.</p>
+              ) : (
+                students.map(s => (
+                  <div
+                    key={s._id}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-canvas transition-colors border border-transparent hover:border-border-light cursor-pointer group"
+                    onClick={() => setActiveRecipient(s)}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-text-main truncate">{s.name}</p>
+                      <p className="text-[10px] text-text-muted truncate">{s.email}</p>
+                    </div>
+                    <button className="opacity-0 group-hover:opacity-100 p-1 text-primary hover:bg-primary/10 rounded transition-all">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+
           <Card>
             <h3 className="font-bold text-text-main mb-3">Counselor Guidelines</h3>
             <p className="text-sm text-text-body mb-4">
@@ -203,7 +237,7 @@ export default function CounselorDashboard() {
           </Card>
         </div>
       </div>
-      <Chat currentUser={user} />
+      <Chat currentUser={user} recipient={activeRecipient} />
     </div>
   );
 }
