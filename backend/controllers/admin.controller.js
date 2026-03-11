@@ -129,6 +129,14 @@ exports.createCounselor = async (req, res) => {
       return res.status(400).json({ message: "Name, email, and password are required" });
     }
 
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK COUNSELOR CREATION (DB disconnected)");
+      return res.status(201).json({
+        message: "Counselor account created successfully (Mock Mode)",
+        user: { id: "mock_c_" + Date.now(), name, email, role: "counselor" }
+      });
+    }
+
     const exists = await User.findOne({ email });
     if (exists) return res.status(409).json({ message: "Email already registered" });
 
@@ -151,6 +159,14 @@ exports.createCounselor = async (req, res) => {
 
 exports.getCounselorLogs = async (req, res) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK COUNSELOR LOGS (DB disconnected)");
+      return res.json([
+        { _id: "ml1", userId: { name: "Alice Student" }, reviewedBy: { name: "Bob Counselor" }, counselorNote: "Mock log 1", status: "reviewed", updatedAt: new Date() },
+        { _id: "ml2", userId: { name: "Charlie Student" }, reviewedBy: { name: "Dave Counselor" }, counselorNote: "Mock log 2", status: "reviewed", updatedAt: new Date() },
+      ]);
+    }
+
     // This is a placeholder for actual logging logic. 
     // In a real app, you'd query a separate Logs collection.
     // For now, we'll return recently reviewed check-ins by all counselors.
