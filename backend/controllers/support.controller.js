@@ -65,11 +65,19 @@ exports.getAllSupportRequests = async (req, res) => {
         { _id: "s2", studentId: null, subject: "Personal Issue", message: "Need someone to talk to.", status: "pending", anonymous: true, createdAt: new Date() },
       ]);
     }
+    const domain = req.user.email.split("@")[1];
     const list = await SupportRequest.find()
-      .populate("studentId", "name email")
+      .populate({
+        path: "studentId",
+        select: "name email",
+        match: { email: { $regex: `@${domain}$` } }
+      })
       .sort({ createdAt: -1 });
 
-    const sanitizedList = list.map(req => {
+    // Filter out requests where studentId is null (not from this domain or deleted)
+    const filteredList = list.filter(r => r.studentId !== null);
+
+    const sanitizedList = filteredList.map(req => {
       const entry = req.toObject();
       if (entry.anonymous) {
         entry.studentId = { name: "Anonymous Student", email: "hidden@aesp.org" };

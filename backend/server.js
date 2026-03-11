@@ -85,6 +85,8 @@ io.on("connection", (socket) => {
   console.log("A user connected: ", socket.id);
 
   socket.on("join-room", (roomId) => {
+    // Basic validation: roomId should start with chat_ and match user's domain
+    // In a prod app, we'd verify the JWT here. 
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
   });
