@@ -3,14 +3,19 @@ const CheckIn = require("../models/CheckIn");
 
 exports.getAllCheckIns = async (req, res) => {
   try {
+    // Extract counselor's domain
+    const counselorDomain = req.user.email.split("@")[1];
+
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK ALL CHECK-INS (DB disconnected)");
       return res.json([
-        { _id: "m1", userId: { name: "Alice Student", email: "alice@test.com" }, moodLevel: 4, message: "Feeling steady.", status: "open", anonymous: false, createdAt: new Date(Date.now() - 86400000) },
-        { _id: "m2", userId: null, moodLevel: 2, message: "Stress is high.", status: "open", anonymous: true, createdAt: new Date(Date.now() - 43200000) },
+        { _id: "m1", userId: { name: "Alice Student", email: "alice@test.com" }, moodLevel: 4, message: "Feeling steady.", status: "open", anonymous: false, domain: counselorDomain, createdAt: new Date(Date.now() - 86400000) },
+        { _id: "m2", userId: null, moodLevel: 2, message: "Stress is high.", status: "open", anonymous: true, domain: counselorDomain, createdAt: new Date(Date.now() - 43200000) },
       ]);
     }
-    const checkIns = await CheckIn.find()
+
+    // Filter by counselor's institutional domain
+    const checkIns = await CheckIn.find({ domain: counselorDomain })
       .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
@@ -51,6 +56,7 @@ exports.reviewCheckIn = async (req, res) => {
 
     checkIn.status = "reviewed";
     checkIn.counselorNote = counselorNote || "";
+    checkIn.reviewedBy = req.user.id;
 
     await checkIn.save();
 

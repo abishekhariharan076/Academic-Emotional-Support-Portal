@@ -30,6 +30,15 @@ const checkInSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    domain: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

@@ -17,11 +17,11 @@ export default function CheckIn() {
 
   // Mood options
   const moods = [
-    { level: 1, label: "Overwhelmed", emoji: "😣", color: "bg-red-100 text-red-700 border-red-200" },
-    { level: 2, label: "Stressed", emoji: "😟", color: "bg-orange-100 text-orange-700 border-orange-200" },
-    { level: 3, label: "Okay", emoji: "😐", color: "bg-gray-100 text-gray-700 border-gray-200" },
-    { level: 4, label: "Good", emoji: "🙂", color: "bg-blue-100 text-blue-700 border-blue-200" },
-    { level: 5, label: "Great", emoji: "😊", color: "bg-green-100 text-green-700 border-green-200" },
+    { level: 1, label: "Overwhelmed", numeric: "1", color: "bg-status-error/10 text-status-error border-status-error/20" },
+    { level: 2, label: "Stressed", numeric: "2", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
+    { level: 3, label: "Okay", numeric: "3", color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
+    { level: 4, label: "Good", numeric: "4", color: "bg-primary/10 text-primary border-primary/20" },
+    { level: 5, label: "Great", numeric: "5", color: "bg-status-success/10 text-status-success border-status-success/20" },
   ];
 
   // Factor options
@@ -89,15 +89,15 @@ export default function CheckIn() {
                   type="button"
                   onClick={() => setMoodLevel(m.level)}
                   className={`
-                    flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all
+                    flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300
                     ${moodLevel === m.level
-                      ? `${m.color} ring-2 ring-offset-2 ring-primary/20 scale-105 shadow-sm`
-                      : "bg-white border-border-light text-text-muted hover:bg-gray-50 opacity-70 hover:opacity-100"
+                      ? `${m.color} ring-4 ring-primary/5 scale-105 shadow-md z-10 font-bold`
+                      : "bg-surface border-border-light text-text-muted hover:bg-gray-50 opacity-60 hover:opacity-100"
                     }
                   `}
                 >
-                  <span className="text-2xl md:text-3xl mb-1">{m.emoji}</span>
-                  <span className="text-[10px] md:text-xs font-semibold">{m.label}</span>
+                  <span className="text-3xl md:text-4xl font-black mb-1.5">{m.numeric}</span>
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">{m.label}</span>
                 </button>
               ))}
             </div>

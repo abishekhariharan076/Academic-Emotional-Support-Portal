@@ -10,7 +10,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
+  const role = "student";
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -83,17 +83,7 @@ export default function Register() {
             required
           />
 
-          <div>
-            <label className="block text-sm font-medium text-text-main mb-1.5">I am a...</label>
-            <select
-              className="block w-full px-3 py-2 rounded-lg border border-gray-300 text-text-body focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="student">Student</option>
-              <option value="counselor">Counselor</option>
-            </select>
-          </div>
+          {/* Role selection removed: All signups are students */}
 
           {msg && (
             <div className="p-3 rounded-lg bg-status-error/10 text-status-error text-sm font-medium text-center">

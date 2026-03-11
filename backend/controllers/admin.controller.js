@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const CheckIn = require("../models/CheckIn");
@@ -115,6 +116,51 @@ exports.updateUserRole = async (req, res) => {
     }
 
     res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.createCounselor = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" });
+    }
+
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(409).json({ message: "Email already registered" });
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      role: "counselor",
+    });
+
+    res.status(201).json({
+      message: "Counselor account created successfully",
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.getCounselorLogs = async (req, res) => {
+  try {
+    // This is a placeholder for actual logging logic. 
+    // In a real app, you'd query a separate Logs collection.
+    // For now, we'll return recently reviewed check-ins by all counselors.
+    const logs = await CheckIn.find({ status: "reviewed" })
+      .populate("userId", "name")
+      .populate("reviewedBy", "name")
+      .sort({ updatedAt: -1 })
+      .limit(50);
+
+    res.json(logs);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

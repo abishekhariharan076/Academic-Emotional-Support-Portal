@@ -15,6 +15,8 @@ exports.createCheckIn = async (req, res) => {
       return res.status(400).json({ message: "Mood level is required" });
     }
 
+    const domain = req.user.email.split("@")[1];
+
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK CHECK-IN (DB disconnected)");
       return res.status(201).json({
@@ -23,6 +25,7 @@ exports.createCheckIn = async (req, res) => {
         moodLevel,
         message,
         anonymous,
+        domain,
         createdAt: new Date(),
         message: "Check-in saved in Mock Mode",
       });
@@ -33,6 +36,7 @@ exports.createCheckIn = async (req, res) => {
       moodLevel,
       message,
       anonymous,
+      domain,
     });
 
     res.status(201).json(checkIn);

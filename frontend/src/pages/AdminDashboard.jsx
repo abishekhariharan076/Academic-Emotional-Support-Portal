@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { api } from "../services/api";
 import Card from "../components/Card";
 import Button from "../components/Button";
+import Input from "../components/Input";
+import Badge from "../components/Badge";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -15,6 +17,10 @@ export default function AdminDashboard() {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
+  const [showCreateCounselor, setShowCreateCounselor] = useState(false);
+  const [counselorForm, setCounselorForm] = useState({ name: "", email: "", password: "" });
+  const [logs, setLogs] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -86,9 +92,41 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const res = await api.get("/admin/logs", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setLogs(res.data);
+    } catch (err) {
+      console.error("Failed to load logs", err);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  const handleCreateCounselor = async (e) => {
+    e.preventDefault();
+    setMsg("");
+    setError("");
+    try {
+      await api.post("/admin/counselors", counselorForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMsg("Counselor account created successfully.");
+      setShowCreateCounselor(false);
+      setCounselorForm({ name: "", email: "", password: "" });
+      fetchUsers();
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to create counselor");
+    }
+  };
+
   useEffect(() => {
     fetchStats();
     fetchUsers();
+    fetchLogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -108,8 +146,11 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="ghost" size="sm" onClick={() => { fetchStats(); fetchUsers(); }}>
+            <Button variant="ghost" size="sm" onClick={() => { fetchStats(); fetchUsers(); fetchLogs(); }}>
               Refresh
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => setShowCreateCounselor(true)}>
+              + New Counselor
             </Button>
             <Button variant="outline" size="sm" onClick={logout}>
               Logout
@@ -171,6 +212,47 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               ) : null}
+            </Card>
+
+            {/* Counselor Logs Section */}
+            <Card>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-bold">Counselor Activity Logs</h2>
+                  <p className="text-sm text-text-body">Recent interactions and reviews</p>
+                </div>
+              </div>
+
+              {loadingLogs ? (
+                <div className="space-y-4 animate-pulse">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-16 bg-canvas rounded-xl"></div>
+                  ))}
+                </div>
+              ) : logs.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-text-muted text-sm">No recent activity found.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {logs.map((log) => (
+                    <div key={log._id} className="p-3 bg-canvas border border-border-light rounded-xl">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-bold">{log.userId?.name || "Student"}</p>
+                          <p className="text-xs text-text-muted">
+                            Reviewed by <span className="font-semibold text-primary">{log.reviewedBy?.name || "Counselor"}</span> on {new Date(log.updatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Badge variant="success">Reviewed</Badge>
+                      </div>
+                      {log.counselorNote && (
+                        <p className="text-xs mt-2 text-text-body italic">"{log.counselorNote}"</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
           </div>
 
@@ -244,6 +326,48 @@ export default function AdminDashboard() {
           </div>
         </div>
       </main>
+
+      {/* Create Counselor Modal */}
+      {showCreateCounselor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <Card className="w-full max-w-md animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-bold mb-4">Create Counselor Account</h2>
+            <form onSubmit={handleCreateCounselor} className="space-y-4">
+              <Input
+                label="Full Name"
+                placeholder="Counselor Name"
+                value={counselorForm.name}
+                onChange={(e) => setCounselorForm({ ...counselorForm, name: e.target.value })}
+                required
+              />
+              <Input
+                label="Email"
+                type="email"
+                placeholder="counselor@institution.edu"
+                value={counselorForm.email}
+                onChange={(e) => setCounselorForm({ ...counselorForm, email: e.target.value })}
+                required
+              />
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                value={counselorForm.password}
+                onChange={(e) => setCounselorForm({ ...counselorForm, password: e.target.value })}
+                required
+              />
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowCreateCounselor(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" className="flex-1">
+                  Create Account
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
