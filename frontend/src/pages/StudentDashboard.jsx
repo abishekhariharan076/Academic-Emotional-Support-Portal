@@ -15,6 +15,7 @@ export default function StudentDashboard() {
   const [support, setSupport] = useState([]);
   const [counselors, setCounselors] = useState([]);
   const [activeRecipient, setActiveRecipient] = useState(null);
+  const [range, setRange] = useState('7D');
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -43,11 +44,12 @@ export default function StudentDashboard() {
 
   // Prepare chart data (reverse to show oldest to newest)
   const chartData = useMemo(() => {
+    const limit = range === '7D' ? 7 : 30;
     return [...checkIns].reverse().map(c => ({
       label: new Date(c.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
       mood: c.moodLevel
-    })).slice(-10); // Last 10
-  }, [checkIns]);
+    })).slice(-limit);
+  }, [checkIns, range]);
 
   const getMoodEmoji = (level) => {
     const moons = ['😟', '😐', '🙂', '😊', '🤩'];
@@ -214,12 +216,22 @@ export default function StudentDashboard() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-lg font-bold text-text-main">Your Well-being Trend</h2>
-                <p className="text-sm text-text-muted">Last 7 check-ins</p>
+                <p className="text-sm text-text-muted">Last {range === '7D' ? '7' : '30'} check-ins</p>
               </div>
-              {/* Toggle placeholder */}
+              {/* Toggle */}
               <div className="flex bg-canvas rounded-lg p-1">
-                <button className="px-3 py-1 text-xs font-medium bg-white shadow rounded-md text-text-main">7D</button>
-                <button className="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-main">30D</button>
+                <button 
+                  onClick={() => setRange('7D')}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${range === '7D' ? 'bg-white shadow text-text-main' : 'text-text-muted hover:text-text-main'}`}
+                >
+                  7D
+                </button>
+                <button 
+                  onClick={() => setRange('30D')}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${range === '30D' ? 'bg-white shadow text-text-main' : 'text-text-muted hover:text-text-main'}`}
+                >
+                  30D
+                </button>
               </div>
             </div>
 
