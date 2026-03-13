@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { io } from "socket.io-client";
 import Button from "./Button";
 import Card from "./Card";
 import Input from "./Input";
 
-const socket = io(import.meta.env.VITE_API_URL.replace("/api", "") || "http://localhost:5000");
+const socket = io((import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace("/api", ""));
 
 export default function Chat({ currentUser, recipient }) {
     const [isOpen, setIsOpen] = useState(false);
