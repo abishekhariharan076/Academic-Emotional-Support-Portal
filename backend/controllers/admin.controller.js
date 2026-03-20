@@ -145,11 +145,13 @@ exports.createCounselor = async (req, res) => {
     if (exists) return res.status(409).json({ message: "Email already registered" });
 
     const hashed = await bcrypt.hash(password, 10);
+    const domain = email.split("@")[1];
     const user = await User.create({
       name,
       email,
       password: hashed,
       role: "counselor",
+      domain
     });
 
     res.status(201).json({
