@@ -16,6 +16,8 @@ export default function CounselorDashboard() {
   const [support, setSupport] = useState([]);
   const [students, setStudents] = useState([]);
   const [activeRecipient, setActiveRecipient] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showChat, setShowChat] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState({});
   const [msg, setMsg] = useState("");
@@ -49,6 +51,32 @@ export default function CounselorDashboard() {
   useEffect(() => {
     fetchAll();
   }, []);
+
+  const startChatWithStudent = async (student) => {
+    // Check if there's an existing support request or create a placeholder one for chat?
+    // User requirement: "students can communicate to counselor through live mssg"
+    // Usually starts with a support request.
+    // If we want to chat directly, we need a "General Chat" support request.
+    try {
+      // Find latest support request from this student
+      const studentRequests = support.filter(r => r.studentId?._id === student._id);
+      if (studentRequests.length > 0) {
+        setSelectedRequest(studentRequests[0]);
+        setShowChat(true);
+      } else {
+        // Create a hidden "Direct Chat" request if none exists
+        const res = await api.post("/support", 
+          { subject: `Direct Chat: ${student.name}`, message: "Starting a live conversation.", anonymous: false },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setSelectedRequest(res.data);
+        setShowChat(true);
+        fetchAll();
+      }
+    } catch (err) {
+      console.error("Failed to start chat:", err);
+    }
+  };
 
   const pendingCheckIns = useMemo(() => checkIns.filter((c) => c.status === "open").length, [checkIns]);
   const pendingSupport = useMemo(() => support.filter((r) => r.status === "pending").length, [support]);
@@ -202,7 +230,7 @@ export default function CounselorDashboard() {
                   <div
                     key={s._id}
                     className="flex items-center justify-between p-2 rounded-lg hover:bg-canvas transition-colors border border-transparent hover:border-border-light cursor-pointer group"
-                    onClick={() => setActiveRecipient(s)}
+                    onClick={() => startChatWithStudent(s)}
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-text-main truncate">{s.name}</p>
@@ -237,7 +265,17 @@ export default function CounselorDashboard() {
           </Card>
         </div>
       </div>
-      <Chat currentUser={user} recipient={activeRecipient} />
+      {/* Chat Overlay */}
+      {showChat && selectedRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative w-full max-w-lg">
+            <Chat 
+              supportRequestId={selectedRequest._id} 
+              onClose={() => setShowChat(false)} 
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

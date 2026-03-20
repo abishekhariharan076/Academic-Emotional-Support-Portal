@@ -4,8 +4,8 @@ import { api } from "../services/api";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
-import MoodTrendChart from "../components/MoodTrendChart";
 import Chat from "../components/Chat";
+import MoodTrendChart from "../components/MoodTrendChart";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -15,6 +15,8 @@ export default function StudentDashboard() {
   const [support, setSupport] = useState([]);
   const [counselors, setCounselors] = useState([]);
   const [activeRecipient, setActiveRecipient] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showChat, setShowChat] = useState(false);
   const [range, setRange] = useState('7D');
 
   useEffect(() => {
@@ -113,9 +115,25 @@ export default function StudentDashboard() {
               <span className="text-sm text-text-muted mb-1">active</span>
             </div>
             {respondedSupport > 0 && (
-              <Badge variant="success" className="mt-2">
-                {respondedSupport} need response
-              </Badge>
+              <div className="mt-2 flex items-center justify-between">
+                <Badge variant="success">
+                  {respondedSupport} new responses
+                </Badge>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="text-primary p-0 h-auto"
+                  onClick={() => {
+                    const latestResponded = support.find(s => s.status === 'responded');
+                    if (latestResponded) {
+                      setSelectedRequest(latestResponded);
+                      setShowChat(true);
+                    }
+                  }}
+                >
+                  Chat &rarr;
+                </Button>
+              </div>
             )}
             {respondedSupport === 0 && pendingSupport === 0 && (
               <p className="mt-2 text-sm text-text-muted">No active requests</p>
@@ -245,7 +263,17 @@ export default function StudentDashboard() {
           </Card>
         </div>
       </div>
-      <Chat currentUser={user} recipient={activeRecipient} />
+      {/* Chat Overlay */}
+      {showChat && selectedRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative w-full max-w-lg">
+            <Chat 
+              supportRequestId={selectedRequest._id} 
+              onClose={() => setShowChat(false)} 
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

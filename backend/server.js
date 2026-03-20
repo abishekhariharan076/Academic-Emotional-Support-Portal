@@ -81,20 +81,35 @@ mongoose
   });
 
 // Socket.io logic
+const Message = require("./models/Message");
+
 io.on("connection", (socket) => {
   console.log("A user connected: ", socket.id);
 
-  socket.on("join-room", (roomId) => {
-    // Basic validation: roomId should start with chat_ and match user's domain
-    // In a prod app, we'd verify the JWT here. 
+  socket.on("join-room", async (roomId) => {
+    // roomId is the SupportRequest ID
     socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
   });
 
-  socket.on("send-message", (data) => {
-    // data: { roomId, sender, message, timestamp }
-    io.to(data.roomId).emit("receive-message", data);
-    console.log(`Message in ${data.roomId} from ${data.sender}: ${data.message}`);
+  socket.on("send-message", async (data) => {
+    // data: { roomId, sender, message, senderId }
+    try {
+      if (mongoose.connection.readyState === 1) {
+        await Message.create({
+          supportRequestId: data.roomId,
+          senderId: data.senderId,
+          text: data.message
+        });
+      }
+      io.to(data.roomId).emit("receive-message", {
+        ...data,
+        createdAt: new Date()
+      });
+      console.log(`Message in ${data.roomId} from ${data.sender}: ${data.message}`);
+    } catch (err) {
+      console.error("Socket message error:", err.message);
+    }
   });
 
   socket.on("disconnect", () => {

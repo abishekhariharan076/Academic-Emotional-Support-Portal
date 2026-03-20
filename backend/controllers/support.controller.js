@@ -65,12 +65,14 @@ exports.getAllSupportRequests = async (req, res) => {
         { _id: "s2", studentId: null, subject: "Personal Issue", message: "Need someone to talk to.", status: "pending", anonymous: true, createdAt: new Date() },
       ]);
     }
-    const domain = req.user.email.split("@")[1];
+    const domain = req.user.domain;
+    if (!domain) return res.status(400).json({ message: "User domain not found" });
+
     const list = await SupportRequest.find()
       .populate({
         path: "studentId",
-        select: "name email",
-        match: { email: { $regex: `@${domain}$` } }
+        select: "name email domain",
+        match: { domain: domain }
       })
       .sort({ createdAt: -1 });
 
@@ -147,6 +149,27 @@ exports.deleteSupportRequest = async (req, res) => {
 
     await request.deleteOne();
     res.json({ message: "Request deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Get chat history
+exports.getChatHistory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Message = require("../models/Message");
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Proceeding with MOCK CHAT HISTORY for ${id} (DB disconnected)`);
+      return res.json([]);
+    }
+
+    const messages = await Message.find({ supportRequestId: id })
+      .sort({ createdAt: 1 })
+      .populate("senderId", "name role");
+
+    res.json(messages);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

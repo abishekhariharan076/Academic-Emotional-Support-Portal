@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const CheckIn = require("../models/CheckIn");
+const InstitutionRequest = require("../models/InstitutionRequest");
 
 exports.getStats = async (req, res) => {
   try {
@@ -58,7 +59,10 @@ exports.getUsers = async (req, res) => {
         { _id: "u3", name: "Charlie Admin", email: "charlie@test.com", role: "admin", createdAt: new Date() },
       ]);
     }
-    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    const users = await User.find()
+      .select("-password")
+      .populate("assignedCounselor", "name email")
+      .sort({ createdAt: -1 });
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -177,6 +181,71 @@ exports.getCounselorLogs = async (req, res) => {
       .limit(50);
 
     res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.getInstitutionRequests = async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.json([
+        { _id: "ir1", institutionName: "Test University", domain: "test.edu", contactEmail: "admin@test.edu", message: "Need counselors.", status: "pending", createdAt: new Date() }
+      ]);
+    }
+    const requests = await InstitutionRequest.find().sort({ createdAt: -1 }).populate("assignedCounselorId", "name email");
+    res.json(requests);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.fulfillInstitutionRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { counselorId } = req.body;
+
+    if (!counselorId) return res.status(400).json({ message: "Counselor ID is required" });
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.json({ message: "Request fulfilled (Mock Mode)" });
+    }
+
+    const request = await InstitutionRequest.findById(id);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+
+    // Update students using email regex
+    await User.updateMany(
+      { email: { $regex: `@${request.domain}$` }, role: "student" },
+      { assignedCounselor: counselorId }
+    );
+
+    request.status = "fulfilled";
+    request.assignedCounselorId = counselorId;
+    await request.save();
+
+    res.json({ message: "Institution request fulfilled and students connected", request });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.assignCounselorToUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { counselorId } = req.body; // can be null to unassign
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.json({ message: "Counselor assigned to user (Mock Mode)" });
+    }
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.assignedCounselor = counselorId || null;
+    await user.save();
+
+    res.json({ message: "Counselor assigned successfully", user });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

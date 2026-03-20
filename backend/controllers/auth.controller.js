@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/User");
 
 const signToken = (user) =>
-  jwt.sign({ id: user._id, role: user.role, email: user.email }, process.env.JWT_SECRET, {
+  jwt.sign({ id: user._id, role: user.role, email: user.email, domain: user.domain }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 
@@ -44,18 +44,20 @@ exports.register = async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
 
+    const domain = email.split("@")[1];
     const user = await User.create({
       name,
       email,
       password: hashed,
       role: ["student", "counselor", "admin"].includes(role) ? role : "student",
+      domain
     });
 
     const token = signToken(user);
 
     res.status(201).json({
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, domain: user.domain },
     });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -107,7 +109,7 @@ exports.login = async (req, res) => {
 
     res.json({
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, domain: user.domain },
     });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -154,11 +156,13 @@ exports.googleLogin = async (req, res) => {
 
     if (!user) {
       // Create new user if not exists
+      const domain = email.split("@")[1];
       user = await User.create({
         name,
         email,
         password: await bcrypt.hash(Math.random().toString(36).slice(-10), 10), // Random password
         role: "student", // Default role
+        domain
       });
       console.log(`New user created via Google: ${email}`);
     }
@@ -167,7 +171,7 @@ exports.googleLogin = async (req, res) => {
 
     res.json({
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role, picture },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, domain: user.domain, picture },
     });
   } catch (err) {
     console.error("Google Login Error:", err.message);

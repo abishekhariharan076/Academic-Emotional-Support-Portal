@@ -7,6 +7,7 @@ import Badge from "../components/Badge";
 import Input from "../components/Input";
 import NotifBadge from "../components/NotifBadge";
 import { countUnseen, markManySeen } from "../utils/seenStore";
+import Chat from "../components/Chat";
 
 export default function SupportRequest() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function SupportRequest() {
   // View state: 'list', 'create', 'detail'
   const [view, setView] = useState('list');
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
   // Form state
   const [subject, setSubject] = useState("");
@@ -286,9 +288,26 @@ export default function SupportRequest() {
                   placeholder="Type your response..."
                 />
                 <div className="flex justify-end gap-2">
-                  <Button onClick={handleReply}>Send Response</Button>
+                  <Button onClick={() => setShowChat(true)} variant="outline" className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    Live Chat
+                  </Button>
+                  <Button onClick={handleReply}>Send Final Response</Button>
                 </div>
               </Card>
+            )}
+
+            {isStudent && (
+              <div className="flex justify-center mt-4">
+                <Button onClick={() => setShowChat(true)} variant="primary" className="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                  Open Live Chat
+                </Button>
+              </div>
             )}
 
             {isStudent && !selectedRequest.counselorReply && (
@@ -296,6 +315,18 @@ export default function SupportRequest() {
                 <p className="text-text-muted">Waiting for a counselor to respond...</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Chat Overlay */}
+      {showChat && selectedRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative w-full max-w-lg">
+            <Chat 
+              supportRequestId={selectedRequest._id} 
+              onClose={() => setShowChat(false)} 
+            />
           </div>
         </div>
       )}
