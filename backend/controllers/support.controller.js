@@ -148,23 +148,3 @@ exports.deleteSupportRequest = async (req, res) => {
   }
 };
 
-// Get chat history
-exports.getChatHistory = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const Message = require("../models/Message");
-
-    if (mongoose.connection.readyState !== 1) {
-      console.log(`Proceeding with MOCK CHAT HISTORY for ${id} (DB disconnected)`);
-      return res.json([]);
-    }
-
-    const messages = await Message.find({ supportRequestId: id })
-      .sort({ createdAt: 1 })
-      .populate("senderId", "name role");
-
-    res.json(messages);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};

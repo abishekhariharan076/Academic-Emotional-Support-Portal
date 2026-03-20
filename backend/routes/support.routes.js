@@ -31,8 +31,6 @@ router.put("/:id/respond", auth, (req, res, next) => {
   next();
 }, respondToSupportRequest);
 
-router.get("/:id/messages", auth, require("../controllers/support.controller").getChatHistory);
-
 router.delete("/:id", auth, deleteSupportRequest);
 
 module.exports = router;

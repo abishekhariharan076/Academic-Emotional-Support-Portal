@@ -4,7 +4,6 @@ import { api } from "../services/api";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
-import Chat from "../components/Chat";
 import MoodTrendChart from "../components/MoodTrendChart";
 
 export default function StudentDashboard() {
@@ -16,7 +15,6 @@ export default function StudentDashboard() {
   const [counselors, setCounselors] = useState([]);
   const [activeRecipient, setActiveRecipient] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [showChat, setShowChat] = useState(false);
   const [range, setRange] = useState('7D');
 
   useEffect(() => {
@@ -119,20 +117,6 @@ export default function StudentDashboard() {
                 <Badge variant="success">
                   {respondedSupport} new responses
                 </Badge>
-                <Button 
-                  size="sm" 
-                  variant="ghost" 
-                  className="text-primary p-0 h-auto"
-                  onClick={() => {
-                    const latestResponded = support.find(s => s.status === 'responded');
-                    if (latestResponded) {
-                      setSelectedRequest(latestResponded);
-                      setShowChat(true);
-                    }
-                  }}
-                >
-                  Chat &rarr;
-                </Button>
               </div>
             )}
             {respondedSupport === 0 && pendingSupport === 0 && (
@@ -209,16 +193,15 @@ export default function StudentDashboard() {
                 counselors.map(c => (
                   <div
                     key={c._id}
-                    className="flex items-center justify-between group cursor-pointer"
-                    onClick={() => setActiveRecipient(c)}
+                    className="flex items-center justify-between group"
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-text-main truncate group-hover:text-primary transition-colors">{c.name}</p>
                       <p className="text-[10px] text-text-muted">Available for support</p>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
                   </div>
@@ -263,17 +246,6 @@ export default function StudentDashboard() {
           </Card>
         </div>
       </div>
-      {/* Chat Overlay */}
-      {showChat && selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative w-full max-w-lg">
-            <Chat 
-              supportRequestId={selectedRequest._id} 
-              onClose={() => setShowChat(false)} 
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require("http");
-const { Server } = require("socket.io");
+const { Server } = require("socket.io"); // Still required for types if needed, but we'll remove usage
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -18,12 +18,7 @@ require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*", // Adjust for production
-    methods: ["GET", "POST"]
-  }
-});
+const io = null; // Removed Socket.io
 
 // middleware
 app.use(cors());
@@ -79,55 +74,6 @@ mongoose
     console.error("MongoDB error ❌", err.message);
     console.log("Proceeding without MongoDB connection for now...");
   });
-
-// Socket.io logic
-const Message = require("./models/Message");
-
-io.on("connection", (socket) => {
-  console.log("A user connected: ", socket.id);
-
-  socket.on("join-room", async (roomId) => {
-    // roomId is the SupportRequest ID
-    socket.join(roomId);
-    console.log(`User ${socket.id} joined room ${roomId}`);
-  });
-
-  socket.on("send-message", async (data) => {
-    // data: { roomId, sender, message, senderId, domain }
-    try {
-      const timestamp = new Date();
-      const messageToEmit = {
-        ...data,
-        text: data.message, // Ensure both 'text' and 'message' are available for frontend compatibility
-        createdAt: timestamp
-      };
-
-      // 1. Emit immediately for real-time visibility
-      io.to(data.roomId || data.supportRequestId).emit("receive-message", messageToEmit);
-      console.log(`Message in ${data.roomId} from ${data.sender}: ${data.message}`);
-
-      // 2. Persist to database in background
-      if (mongoose.connection.readyState === 1) {
-        try {
-          await Message.create({
-            supportRequestId: data.roomId || data.supportRequestId,
-            senderId: data.senderId,
-            text: data.message,
-            domain: data.domain || "unknown"
-          });
-        } catch (dbErr) {
-          console.error("Failed to persist message to DB:", dbErr.message);
-        }
-      }
-    } catch (err) {
-      console.error("Socket error:", err.message);
-    }
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected: ", socket.id);
-  });
-});
 
 const PORT = process.env.PORT || 5000;
 console.log(`Starting server on port ${PORT}...`);

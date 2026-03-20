@@ -5,7 +5,6 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
 import NotifBadge from "../components/NotifBadge";
-import Chat from "../components/Chat";
 
 export default function CounselorDashboard() {
   const navigate = useNavigate();
@@ -15,9 +14,7 @@ export default function CounselorDashboard() {
   const [checkIns, setCheckIns] = useState([]);
   const [support, setSupport] = useState([]);
   const [students, setStudents] = useState([]);
-  const [activeRecipient, setActiveRecipient] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [showChat, setShowChat] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState({});
   const [msg, setMsg] = useState("");
@@ -53,29 +50,7 @@ export default function CounselorDashboard() {
   }, []);
 
   const startChatWithStudent = async (student) => {
-    // Check if there's an existing support request or create a placeholder one for chat?
-    // User requirement: "students can communicate to counselor through live mssg"
-    // Usually starts with a support request.
-    // If we want to chat directly, we need a "General Chat" support request.
-    try {
-      // Find latest support request from this student
-      const studentRequests = support.filter(r => r.studentId?._id === student._id);
-      if (studentRequests.length > 0) {
-        setSelectedRequest(studentRequests[0]);
-        setShowChat(true);
-      } else {
-        // Create a hidden "Direct Chat" request if none exists
-        const res = await api.post("/support", 
-          { subject: `Direct Chat: ${student.name}`, message: "Starting a live conversation.", anonymous: false },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setSelectedRequest(res.data);
-        setShowChat(true);
-        fetchAll();
-      }
-    } catch (err) {
-      console.error("Failed to start chat:", err);
-    }
+    navigate('/support'); // Redirect to support inbox instead
   };
 
   const pendingCheckIns = useMemo(() => checkIns.filter((c) => c.status === "open").length, [checkIns]);
@@ -229,18 +204,17 @@ export default function CounselorDashboard() {
                 students.map(s => (
                   <div
                     key={s._id}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-canvas transition-colors border border-transparent hover:border-border-light cursor-pointer group"
-                    onClick={() => startChatWithStudent(s)}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-canvas transition-colors border border-transparent hover:border-border-light group"
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-text-main truncate">{s.name}</p>
                       <p className="text-[10px] text-text-muted truncate">{s.email}</p>
                     </div>
-                    <button className="opacity-0 group-hover:opacity-100 p-1 text-primary hover:bg-primary/10 rounded transition-all">
+                    <div className="opacity-0 group-hover:opacity-100 p-1 text-text-muted rounded transition-all">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                    </button>
+                    </div>
                   </div>
                 ))
               )}
@@ -265,17 +239,6 @@ export default function CounselorDashboard() {
           </Card>
         </div>
       </div>
-      {/* Chat Overlay */}
-      {showChat && selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative w-full max-w-lg">
-            <Chat 
-              supportRequestId={selectedRequest._id} 
-              onClose={() => setShowChat(false)} 
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
