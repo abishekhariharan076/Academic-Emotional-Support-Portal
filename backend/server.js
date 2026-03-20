@@ -99,7 +99,8 @@ io.on("connection", (socket) => {
         await Message.create({
           supportRequestId: data.roomId,
           senderId: data.senderId,
-          text: data.message
+          text: data.message,
+          domain: data.domain || "unknown" // Use domain from client if available
         });
       }
       io.to(data.roomId).emit("receive-message", {

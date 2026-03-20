@@ -56,6 +56,7 @@ export default function Chat({ supportRequestId, onClose }) {
       roomId: supportRequestId,
       sender: user.name,
       senderId: user.id,
+      domain: user.domain,
       message: text,
     };
 

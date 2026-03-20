@@ -29,6 +29,7 @@ exports.createSupportRequest = async (req, res) => {
       message,
       anonymous: !!anonymous,
       status: "pending",
+      domain: req.user.domain || req.user.email.split("@")[1]
     });
 
     res.json(doc);
@@ -68,18 +69,11 @@ exports.getAllSupportRequests = async (req, res) => {
     const domain = req.user.domain;
     if (!domain) return res.status(400).json({ message: "User domain not found" });
 
-    const list = await SupportRequest.find()
-      .populate({
-        path: "studentId",
-        select: "name email domain",
-        match: { domain: domain }
-      })
+    const list = await SupportRequest.find({ domain })
+      .populate("studentId", "name email")
       .sort({ createdAt: -1 });
 
-    // Filter out requests where studentId is null (not from this domain or deleted)
-    const filteredList = list.filter(r => r.studentId !== null);
-
-    const sanitizedList = filteredList.map(req => {
+    const sanitizedList = list.map(req => {
       const entry = req.toObject();
       if (entry.anonymous) {
         entry.studentId = { name: "Anonymous Student", email: "hidden@aesp.org" };

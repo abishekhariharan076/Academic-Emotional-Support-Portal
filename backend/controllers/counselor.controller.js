@@ -83,8 +83,8 @@ exports.getStudents = async (req, res) => {
 
     const students = await User.find({
       role: "student",
-      email: { $regex: `@${counselorDomain}$` }
-    }).select("name email");
+      domain: counselorDomain
+    }).select("name email domain");
 
     res.json(students);
   } catch (err) {
@@ -106,8 +106,8 @@ exports.getCounselors = async (req, res) => {
 
     const counselors = await User.find({
       role: "counselor",
-      email: { $regex: `@${studentDomain}$` }
-    }).select("name email");
+      domain: studentDomain
+    }).select("name email domain");
 
     res.json(counselors);
   } catch (err) {

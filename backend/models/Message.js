@@ -18,7 +18,12 @@ const messageSchema = new mongoose.Schema(
       required: true,
       trim: true,
       maxlength: 2000
-    }
+    },
+    domain: {
+      type: String,
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );

@@ -50,6 +50,11 @@ const supportRequestSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    domain: {
+      type: String,
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );
