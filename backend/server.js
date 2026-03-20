@@ -93,23 +93,34 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-message", async (data) => {
-    // data: { roomId, sender, message, senderId }
+    // data: { roomId, sender, message, senderId, domain }
     try {
-      if (mongoose.connection.readyState === 1) {
-        await Message.create({
-          supportRequestId: data.roomId,
-          senderId: data.senderId,
-          text: data.message,
-          domain: data.domain || "unknown" // Use domain from client if available
-        });
-      }
-      io.to(data.roomId).emit("receive-message", {
+      const timestamp = new Date();
+      const messageToEmit = {
         ...data,
-        createdAt: new Date()
-      });
+        text: data.message, // Ensure both 'text' and 'message' are available for frontend compatibility
+        createdAt: timestamp
+      };
+
+      // 1. Emit immediately for real-time visibility
+      io.to(data.roomId || data.supportRequestId).emit("receive-message", messageToEmit);
       console.log(`Message in ${data.roomId} from ${data.sender}: ${data.message}`);
+
+      // 2. Persist to database in background
+      if (mongoose.connection.readyState === 1) {
+        try {
+          await Message.create({
+            supportRequestId: data.roomId || data.supportRequestId,
+            senderId: data.senderId,
+            text: data.message,
+            domain: data.domain || "unknown"
+          });
+        } catch (dbErr) {
+          console.error("Failed to persist message to DB:", dbErr.message);
+        }
+      }
     } catch (err) {
-      console.error("Socket message error:", err.message);
+      console.error("Socket error:", err.message);
     }
   });
 

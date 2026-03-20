@@ -20,6 +20,7 @@ export default function Chat({ supportRequestId, onClose }) {
     // Fetch history
     const fetchHistory = async () => {
       try {
+        if (!supportRequestId) return;
         const res = await api.get(`/support/${supportRequestId}/messages`);
         setMessages(res.data);
       } catch (err) {
