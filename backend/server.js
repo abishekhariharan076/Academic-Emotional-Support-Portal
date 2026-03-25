@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
+  max: 300, // Limit each IP to 300 requests per window (increased from 100)
   message: { message: "Too many requests, please try again later." },
 });
 
@@ -48,10 +48,10 @@ const authLimiter = rateLimit({
   skip: (req) => req.method === "OPTIONS", // Don't limit preflight requests
 });
 
-app.use("/api", limiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 app.use("/api/auth", authRoutes);
+app.use("/api", limiter);
 app.use("/api/checkins", checkInRoutes);
 app.use("/api/counselor", counselorRoutes);
 app.use("/api/admin", adminRoutes);
