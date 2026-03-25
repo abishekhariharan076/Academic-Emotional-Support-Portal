@@ -6,7 +6,7 @@ const User = require("../models/User");
 
 const signToken = (user) =>
   jwt.sign({ id: user._id, role: user.role, email: user.email, domain: user.domain }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "24h", // Reduced from 7d to 24h for security
   });
 
 exports.register = async (req, res) => {
@@ -100,10 +100,16 @@ exports.login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
-
+    if (!user) {
+      console.warn(`SECURITY: Failed login attempt for non-existent email: ${email}`);
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+ 
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+    if (!ok) {
+      console.warn(`SECURITY: Failed login attempt for email: ${email}`);
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const token = signToken(user);
 
@@ -193,7 +199,8 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-
+    console.log(`SECURITY: Password reset requested for: ${email}`);
+ 
     // Always return success for security (don't reveal if email exists)
     if (!user) {
       return res.json({ message: "If that email exists, a reset link has been sent." });

@@ -21,7 +21,27 @@ const server = http.createServer(app);
 const io = null; // Removed Socket.io
 
 // middleware
-app.use(cors());
+// whitelist for CORS
+const whitelist = [
+  "https://academic-emotional-support-portal.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173"
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn(`Blocked by CORS: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
