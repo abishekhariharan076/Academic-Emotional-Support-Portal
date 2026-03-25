@@ -16,7 +16,7 @@ export default function Resources() {
     const fetchResources = async () => {
         setLoading(true);
         try {
-            const res = await api.get("/resources");
+            const res = await api.get("/reference");
             setResources(res.data);
         } catch (err) {
             console.error("Failed to fetch resources", err);
@@ -36,7 +36,7 @@ export default function Resources() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-2xl font-bold text-text-main">Supporting Resources</h1>
+                <h1 className="text-2xl font-bold text-text-main">Reference Page</h1>
                 <p className="text-text-body">Explore materials to help you navigate your academic and emotional well-being.</p>
             </div>
 
@@ -56,7 +56,7 @@ export default function Resources() {
             </div>
 
             {loading ? (
-                <p>Loading resources...</p>
+                <p>Loading references...</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredResources.map((res) => (

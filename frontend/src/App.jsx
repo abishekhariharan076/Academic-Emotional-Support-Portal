@@ -88,7 +88,7 @@ export default function App() {
 
         {/* Resources (Shared) */}
         <Route
-          path="/resources"
+          path="/reference"
           element={
             <ProtectedRoute allowedRoles={["student", "counselor", "admin"]}>
               <Resources />

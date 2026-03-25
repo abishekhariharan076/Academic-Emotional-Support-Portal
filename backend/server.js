@@ -56,7 +56,7 @@ app.use("/api/checkins", checkInRoutes);
 app.use("/api/counselor", counselorRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/support", supportRoutes);
-app.use("/api/resources", require("./routes/resource.routes"));
+app.use("/api/reference", require("./routes/resource.routes"));
 
 
 

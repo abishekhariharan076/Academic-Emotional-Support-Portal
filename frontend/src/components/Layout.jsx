@@ -28,20 +28,20 @@ const Layout = () => {
         { label: 'Dashboard', path: '/student', icon: 'LayoutDashboard' },
         { label: 'Check-In', path: '/checkin', icon: 'HeartHandshake' },
         { label: 'Support Requests', path: '/support', icon: 'MessageSquare' },
-        { label: 'Resources', path: '/resources', icon: 'BookOpen' },
+        { label: 'Reference', path: '/reference', icon: 'BookOpen' },
         // { label: 'Resources', path: '/resources', icon: 'BookOpen' }, // To be implemented
     ];
 
     const counselorLinks = [
         { label: 'Dashboard', path: '/counselor', icon: 'LayoutDashboard' },
         { label: 'Support Requests', path: '/support', icon: 'Inbox' },
-        { label: 'Resources', path: '/resources', icon: 'BookOpen' },
+        { label: 'Reference', path: '/reference', icon: 'BookOpen' },
         // { label: 'Insights', path: '/counselor/insights', icon: 'BarChart' },
     ];
 
     const adminLinks = [
         { label: 'Dashboard', path: '/admin', icon: 'Shield' },
-        { label: 'Resources', path: '/resources', icon: 'BookOpen' },
+        { label: 'Reference', path: '/reference', icon: 'BookOpen' },
     ];
 
     let links = [];
