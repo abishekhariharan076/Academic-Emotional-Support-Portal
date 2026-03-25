@@ -51,10 +51,24 @@ exports.getResources = async (req, res) => {
             {
                 _id: "res3",
                 title: "Focus & Time Management",
-                description: "Techniques like Pomodoro to help you stay productive without burnouts.",
+                description: "Master techniques like Pomodoro and time blocking to stay productive and avoid academic burnout.",
                 category: "Focus",
-                type: "Video",
-                link: "https://example.com/focus-techniques",
+                type: "Article",
+                link: "#",
+                fullContent: [
+                    {
+                        title: "Pomodoro Basics",
+                        text: "Choose a single task, set a timer for 25 minutes of uninterrupted focus, then take a 5-minute break. After four cycles (about 2 hours), enjoy a longer 15-30 minute break to recharge fully. Track completed 'pomodoros' to monitor progress and refine your rhythm."
+                    },
+                    {
+                        title: "Complementary Techniques",
+                        text: "Prioritize tasks using time blocking: assign specific slots (e.g., 4-5 PM for math homework) to avoid multitasking, which cuts productivity by up to 40%. Break large assignments into small steps and use the '1-hour daily rule' for spaced revision to boost memory without cramming. Silence notifications and study in a distraction-free zone during sessions."
+                    },
+                    {
+                        title: "Avoiding Burnout",
+                        text: "Adjust intervals if 25 minutes feels too long—try 15 or 10 for tough tasks—and always protect breaks for movement or snacks. Review weekly to balance study with rest, declining overload to safeguard mental energy. Consistent use improves concentration over time, directly lifting academic output."
+                    }
+                ]
             },
             {
                 _id: "res4",
