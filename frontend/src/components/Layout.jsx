@@ -86,9 +86,8 @@ const Layout = () => {
         `}
             >
                 {/* Logo Area */}
-                <div className="h-16 flex items-center px-6 border-b border-border">
-                    <Logo type="mini" className="w-8 h-8 rounded-lg mr-2" />
-                    <span className="text-xl font-bold text-primary">AESP</span>
+                <div className="h-16 flex items-center px-4 border-b border-border">
+                    <Logo type="horizontal" />
                 </div>
 
                 {/* Navigation */}

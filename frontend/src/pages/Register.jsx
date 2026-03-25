@@ -46,8 +46,8 @@ export default function Register() {
     <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md p-8 shadow-lg">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-block transform hover:scale-105 transition-transform">
-            <Logo type="mini" className="w-12 h-12 rounded-xl mx-auto mb-4" />
+          <Link to="/" className="block mb-10 transform hover:scale-[1.02] transition-transform">
+            <Logo type="full" />
           </Link>
           <h1 className="text-2xl font-bold text-text-main">Create an account</h1>
           <p className="mt-2 text-sm text-text-body">

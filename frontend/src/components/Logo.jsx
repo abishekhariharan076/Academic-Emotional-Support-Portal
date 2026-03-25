@@ -1,24 +1,45 @@
 import React from 'react';
 
-const Logo = ({ className = "", type = "full", light = false }) => {
-  // Use the new primary and primary-light (mint) colors from theme
-  const bgColor = light ? "bg-primary-light" : "bg-primary";
-  const textColor = light ? "text-primary" : "text-primary-light";
+const Logo = ({ className = "", type = "full", light = false, align = "center" }) => {
+  const textColor = light ? "text-primary-light" : "text-primary";
+  const subtextColor = light ? "text-primary-light/80" : "text-primary/70";
+
+  const alignmentClass = align === "left" ? "items-start text-left" : "items-center text-center";
 
   if (type === "mini") {
     return (
-      <div className={`flex items-center justify-center rounded-lg font-bold ${bgColor} ${textColor} ${className}`}>
-        AE
+      <div className={`flex flex-col ${alignmentClass} ${className}`}>
+        <span className={`text-2xl font-black tracking-tighter ${textColor} leading-none`}>
+          AESP
+        </span>
+      </div>
+    );
+  }
+
+  if (type === "horizontal") {
+    return (
+      <div className={`flex items-center gap-3 ${className}`}>
+        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-light font-bold text-lg shadow-sm">
+          AE
+        </div>
+        <div className="flex flex-col items-start">
+          <span className={`text-xl font-bold tracking-tight ${textColor} leading-none`}>
+            AESP
+          </span>
+          <span className={`text-[8px] uppercase tracking-widest ${subtextColor} font-medium`}>
+            Support Portal
+          </span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center text-center ${className}`}>
-      <span className={`text-4xl font-bold tracking-tight ${textColor} leading-none`}>
+    <div className={`flex flex-col ${alignmentClass} ${className}`}>
+      <span className={`text-5xl md:text-6xl font-bold tracking-tight ${textColor} leading-none`}>
         AESP
       </span>
-      <span className={`text-[10px] uppercase tracking-[0.2em] ${textColor} mt-1 font-medium opacity-90 whitespace-nowrap`}>
+      <span className={`text-[10px] md:text-xs uppercase tracking-[0.3em] ${subtextColor} mt-2 font-medium whitespace-nowrap pl-1`}>
         academic emotional support portal
       </span>
     </div>

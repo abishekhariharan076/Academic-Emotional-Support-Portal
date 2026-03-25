@@ -10,9 +10,8 @@ const Landing = () => {
             {/* Sticky Header */}
             <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-border-light">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2">
-                        <Logo type="mini" className="w-8 h-8 rounded-lg" />
-                        <span className="text-xl font-bold tracking-tight text-primary">AESP</span>
+                    <Link to="/" className="flex items-center">
+                        <Logo type="horizontal" />
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-8">
