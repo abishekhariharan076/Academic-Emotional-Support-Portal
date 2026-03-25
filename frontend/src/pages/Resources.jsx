@@ -3,11 +3,13 @@ import { api } from "../services/api";
 import Card from "../components/Card";
 import Badge from "../components/Badge";
 import Button from "../components/Button";
+import Modal from "../components/Modal";
 
 export default function Resources() {
     const [resources, setResources] = useState([]);
     const [filter, setFilter] = useState("All");
     const [loading, setLoading] = useState(true);
+    const [selectedResource, setSelectedResource] = useState(null);
 
     const categories = ["All", "Anxiety", "Sleep", "Focus", "Stress", "General"];
 
@@ -68,20 +70,49 @@ export default function Resources() {
                             <Button
                                 variant="outline"
                                 className="w-full"
-                                onClick={() => window.open(res.link, "_blank")}
+                                onClick={() => {
+                                    if (res.fullContent) {
+                                        setSelectedResource(res);
+                                    } else {
+                                        window.open(res.link, "_blank");
+                                    }
+                                }}
                             >
-                                View Resource
+                                {res.fullContent ? "Read Article" : "View Resource"}
                             </Button>
                         </Card>
                     ))}
                 </div>
             )}
 
-            {!loading && filteredResources.length === 0 && (
+            {filteredResources.length === 0 && !loading && (
                 <Card className="py-12 text-center text-text-muted">
                     No resources found for this category.
                 </Card>
             )}
+
+            <Modal
+                isOpen={!!selectedResource}
+                onClose={() => setSelectedResource(null)}
+                title={selectedResource?.title}
+            >
+                {selectedResource?.fullContent && (
+                    <div className="space-y-6">
+                        <section>
+                            <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Common Symptoms</h4>
+                            <p className="text-text-main leading-relaxed">{selectedResource.fullContent.symptoms}</p>
+                        </section>
+                        <section>
+                            <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Recognition Tips</h4>
+                            <p className="text-text-main leading-relaxed">{selectedResource.fullContent.recognition}</p>
+                        </section>
+                        <section>
+                            <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Management Strategies</h4>
+                            <p className="text-text-main leading-relaxed">{selectedResource.fullContent.management}</p>
+                        </section>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 }

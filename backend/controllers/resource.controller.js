@@ -7,10 +7,15 @@ exports.getResources = async (req, res) => {
             {
                 _id: "res1",
                 title: "Understanding Anxiety",
-                description: "A guide to recognizing and managing common anxiety symptoms in students.",
+                description: "Recognize symptoms, identify body signals, and learn effective management strategies for academic anxiety.",
                 category: "Anxiety",
                 type: "Article",
-                link: "https://example.com/anxiety-guide",
+                link: "#",
+                fullContent: {
+                    symptoms: "Students with anxiety often show physical signs like rapid heartbeat, sweating, stomachaches, headaches, or muscle tension. Emotionally, they may feel excessive worry, irritability, or negative thoughts, while behaviorally, they avoid tasks, struggle with focus, or exhibit restlessness—sometimes mistaken for ADHD. Patterns like frequent 'illness' on test days or declining grades signal a need for support.",
+                    recognition: "Watch for self-soothing habits such as nail-biting, hair-pulling, or fidgeting, which provide temporary relief. Teach self-awareness through exercises like noting body signals (e.g., 'racing heart') or anxious thoughts (e.g., 'What if I fail?'). In classrooms, note concentration issues or avoidance of social/homework situations as key indicators.",
+                    management: "Practice deep breathing, progressive muscle relaxation, or mindfulness meditation to calm immediate symptoms. Encourage healthy habits like regular exercise, sleep, and an 'anxiety diary' to track triggers and challenge negative self-talk. For ongoing issues, seek school counseling or professional help, and create supportive environments by validating feelings without enabling avoidance."
+                }
             },
             {
                 _id: "res2",
