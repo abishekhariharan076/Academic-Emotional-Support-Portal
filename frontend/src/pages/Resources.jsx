@@ -96,20 +96,18 @@ export default function Resources() {
                 onClose={() => setSelectedResource(null)}
                 title={selectedResource?.title}
             >
-                {selectedResource?.fullContent && (
+                {selectedResource?.fullContent && Array.isArray(selectedResource.fullContent) && (
                     <div className="space-y-6">
-                        <section>
-                            <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Common Symptoms</h4>
-                            <p className="text-text-main leading-relaxed">{selectedResource.fullContent.symptoms}</p>
-                        </section>
-                        <section>
-                            <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Recognition Tips</h4>
-                            <p className="text-text-main leading-relaxed">{selectedResource.fullContent.recognition}</p>
-                        </section>
-                        <section>
-                            <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">Management Strategies</h4>
-                            <p className="text-text-main leading-relaxed">{selectedResource.fullContent.management}</p>
-                        </section>
+                        {selectedResource.fullContent.map((section, idx) => (
+                            <section key={idx}>
+                                <h4 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">
+                                    {section.title}
+                                </h4>
+                                <p className="text-text-main leading-relaxed">
+                                    {section.text}
+                                </p>
+                            </section>
+                        ))}
                     </div>
                 )}
             </Modal>

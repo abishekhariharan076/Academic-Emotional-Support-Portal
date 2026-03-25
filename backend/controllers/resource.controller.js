@@ -11,19 +11,42 @@ exports.getResources = async (req, res) => {
                 category: "Anxiety",
                 type: "Article",
                 link: "#",
-                fullContent: {
-                    symptoms: "Students with anxiety often show physical signs like rapid heartbeat, sweating, stomachaches, headaches, or muscle tension. Emotionally, they may feel excessive worry, irritability, or negative thoughts, while behaviorally, they avoid tasks, struggle with focus, or exhibit restlessness—sometimes mistaken for ADHD. Patterns like frequent 'illness' on test days or declining grades signal a need for support.",
-                    recognition: "Watch for self-soothing habits such as nail-biting, hair-pulling, or fidgeting, which provide temporary relief. Teach self-awareness through exercises like noting body signals (e.g., 'racing heart') or anxious thoughts (e.g., 'What if I fail?'). In classrooms, note concentration issues or avoidance of social/homework situations as key indicators.",
-                    management: "Practice deep breathing, progressive muscle relaxation, or mindfulness meditation to calm immediate symptoms. Encourage healthy habits like regular exercise, sleep, and an 'anxiety diary' to track triggers and challenge negative self-talk. For ongoing issues, seek school counseling or professional help, and create supportive environments by validating feelings without enabling avoidance."
-                }
+                fullContent: [
+                    {
+                        title: "Common Symptoms",
+                        text: "Students with anxiety often show physical signs like rapid heartbeat, sweating, stomachaches, headaches, or muscle tension. Emotionally, they may feel excessive worry, irritability, or negative thoughts, while behaviorally, they avoid tasks, struggle with focus, or exhibit restlessness—sometimes mistaken for ADHD. Patterns like frequent 'illness' on test days or declining grades signal a need for support."
+                    },
+                    {
+                        title: "Recognition Tips",
+                        text: "Watch for self-soothing habits such as nail-biting, hair-pulling, or fidgeting, which provide temporary relief. Teach self-awareness through exercises like noting body signals (e.g., 'racing heart') or anxious thoughts (e.g., 'What if I fail?'). In classrooms, note concentration issues or avoidance of social/homework situations as key indicators."
+                    },
+                    {
+                        title: "Management Strategies",
+                        text: "Practice deep breathing, progressive muscle relaxation, or mindfulness meditation to calm immediate symptoms. Encourage healthy habits like regular exercise, sleep, and an 'anxiety diary' to track triggers and challenge negative self-talk. For ongoing issues, seek school counseling or professional help, and create supportive environments by validating feelings without enabling avoidance."
+                    }
+                ]
             },
             {
                 _id: "res2",
                 title: "Sleep Hygiene 101",
-                description: "Practical tips for improving your sleep quality and academic performance.",
+                description: "Practical tips for improving your sleep quality and academic performance with better daily routines.",
                 category: "Sleep",
-                type: "PDF",
-                link: "https://example.com/sleep-hygiene",
+                type: "Article",
+                link: "#",
+                fullContent: [
+                    {
+                        title: "Key Principles",
+                        text: "Maintain a fixed sleep schedule, even on weekends, aiming for 7-9 hours nightly to align your circadian rhythm. Avoid caffeine after noon and heavy meals close to bedtime, as they disrupt melatonin production. Limit naps to 20-30 minutes early in the day to prevent nighttime interference."
+                    },
+                    {
+                        title: "Bedroom Setup",
+                        text: "Keep your room cool (60-67°F), dark with blackout curtains or masks, and quiet using earplugs or white noise. Invest in a supportive mattress, pillow, and breathable bedding reserved solely for sleep and relaxation—no work or screens."
+                    },
+                    {
+                        title: "Daily Routines",
+                        text: "Exercise regularly but finish vigorous activity 3+ hours before bed to deepen sleep without overstimulation. Wind down with a screen-free routine like reading or journaling 1 hour prior, dimming lights to signal rest. Track sleep patterns in a diary to identify and adjust personal triggers."
+                    }
+                ]
             },
             {
                 _id: "res3",
