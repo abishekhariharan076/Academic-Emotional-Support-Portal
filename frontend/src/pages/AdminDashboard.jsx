@@ -8,8 +8,8 @@ import Badge from "../components/Badge";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  const token = localStorage.getItem("token");
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const token = sessionStorage.getItem("token");
 
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
@@ -31,8 +31,8 @@ export default function AdminDashboard() {
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     navigate("/login");
   };
 

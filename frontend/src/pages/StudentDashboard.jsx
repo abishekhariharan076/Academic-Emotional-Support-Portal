@@ -8,7 +8,7 @@ import MoodTrendChart from "../components/MoodTrendChart";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
   const [loading, setLoading] = useState(true);
   const [checkIns, setCheckIns] = useState([]);
   const [support, setSupport] = useState([]);
@@ -20,7 +20,7 @@ export default function StudentDashboard() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const [checkInsRes, supportRes, counselorRes] = await Promise.all([
           api.get("/checkins/my", { headers: { Authorization: `Bearer ${token}` } }),
           api.get("/support/my", { headers: { Authorization: `Bearer ${token}` } }),

@@ -12,7 +12,7 @@ export default function CheckInHistory() {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = sessionStorage.getItem("token");
                 const res = await api.get("/checkins/my", {
                     headers: { Authorization: `Bearer ${token}` }
                 });

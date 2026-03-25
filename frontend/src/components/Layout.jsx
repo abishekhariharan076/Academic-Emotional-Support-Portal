@@ -8,15 +8,15 @@ const Layout = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+        const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
         if (storedUser) {
             setUser(storedUser);
         }
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
         navigate("/login");
     };
 

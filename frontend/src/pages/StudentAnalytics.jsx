@@ -14,7 +14,7 @@ export default function StudentAnalytics() {
     const fetchCheckIns = async () => {
       try {
         const res = await api.get("/checkins/my", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
         });
         setCheckIns(res.data);
       } finally {

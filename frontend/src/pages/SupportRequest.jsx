@@ -10,8 +10,8 @@ import { countUnseen, markManySeen } from "../utils/seenStore";
 
 export default function SupportRequest() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  const token = localStorage.getItem("token");
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const token = sessionStorage.getItem("token");
 
   const isStudent = user?.role === "student";
   const isCounselor = user?.role === "counselor";

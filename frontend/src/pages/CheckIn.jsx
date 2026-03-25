@@ -54,7 +54,7 @@ export default function CheckIn() {
         { moodLevel, message: finalMessage, anonymous },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         }
       );

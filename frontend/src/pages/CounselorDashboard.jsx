@@ -8,8 +8,8 @@ import NotifBadge from "../components/NotifBadge";
 
 export default function CounselorDashboard() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  const token = localStorage.getItem("token");
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const token = sessionStorage.getItem("token");
 
   const [checkIns, setCheckIns] = useState([]);
   const [support, setSupport] = useState([]);

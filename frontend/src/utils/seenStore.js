@@ -2,14 +2,14 @@ const KEY = "aesp_seen_v1";
 
 function readStore() {
   try {
-    return JSON.parse(localStorage.getItem(KEY) || "{}");
+    return JSON.parse(sessionStorage.getItem(KEY) || "{}");
   } catch {
     return {};
   }
 }
 
 function writeStore(obj) {
-  localStorage.setItem(KEY, JSON.stringify(obj));
+  sessionStorage.setItem(KEY, JSON.stringify(obj));
 }
 
 // seen categories: "checkin_response", "support_reply"
