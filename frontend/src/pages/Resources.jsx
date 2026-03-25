@@ -19,7 +19,7 @@ export default function Resources() {
             const res = await api.get("/reference");
             setResources(res.data);
         } catch (err) {
-            console.error("Failed to fetch resources", err);
+            console.error("Failed to fetch references", err);
         } finally {
             setLoading(false);
         }
@@ -37,7 +37,7 @@ export default function Resources() {
         <div className="space-y-8">
             <div>
                 <h1 className="text-2xl font-bold text-text-main">Reference Page</h1>
-                <p className="text-text-body">Explore materials to help you navigate your academic and emotional well-being.</p>
+                <p className="text-text-body">Explore reference materials to help you navigate your academic and emotional well-being.</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -56,7 +56,7 @@ export default function Resources() {
             </div>
 
             {loading ? (
-                <p>Loading references...</p>
+                <p>Loading resources...</p>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredResources.map((res) => (
@@ -87,7 +87,7 @@ export default function Resources() {
 
             {filteredResources.length === 0 && !loading && (
                 <Card className="py-12 text-center text-text-muted">
-                    No resources found for this category.
+                    No reference materials found for this category.
                 </Card>
             )}
 
