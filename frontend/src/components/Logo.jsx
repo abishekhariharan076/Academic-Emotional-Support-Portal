@@ -23,8 +23,8 @@ const Logo = ({ className = "", type = "full", light = false, align = "center" }
           <span className={`text-xl font-bold tracking-tight ${textColor} leading-none`}>
             AESP
           </span>
-          <span className={`text-[8px] uppercase tracking-widest ${subtextColor} font-medium`}>
-            Support Portal
+          <span className={`text-[8px] uppercase tracking-widest ${subtextColor} font-medium whitespace-nowrap`}>
+            Academic Emotional Support Portal
           </span>
         </div>
       </div>
