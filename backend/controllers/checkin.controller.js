@@ -10,6 +10,11 @@ exports.createCheckIn = async (req, res) => {
 
   try {
     const { moodLevel, message, anonymous } = req.body;
+    const attachments = req.files ? req.files.map(file => ({
+      url: `/uploads/checkins/${file.filename}`,
+      fileType: file.mimetype.startsWith('video') ? 'video' : 'image',
+      originalName: file.originalname
+    })) : [];
 
     if (!moodLevel) {
       return res.status(400).json({ message: "Mood level is required" });
@@ -26,6 +31,7 @@ exports.createCheckIn = async (req, res) => {
         message,
         anonymous,
         domain,
+        attachments,
         createdAt: new Date(),
         message: "Check-in saved in Mock Mode",
       });
@@ -37,6 +43,7 @@ exports.createCheckIn = async (req, res) => {
       message,
       anonymous,
       domain,
+      attachments,
     });
 
     res.status(201).json(checkIn);

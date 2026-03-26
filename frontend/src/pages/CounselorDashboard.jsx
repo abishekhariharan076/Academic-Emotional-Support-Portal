@@ -162,6 +162,29 @@ export default function CounselorDashboard() {
                       </div>
                     )}
 
+                    {checkIn.attachments && checkIn.attachments.length > 0 && (
+                      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-4">
+                        {checkIn.attachments.map((file, idx) => (
+                          <div key={idx} className="relative group rounded-lg overflow-hidden border border-border-light bg-canvas aspect-square">
+                            {file.fileType === 'video' ? (
+                              <video 
+                                className="w-full h-full object-cover" 
+                                src={`${api.defaults.baseURL.replace('/api', '')}${file.url}`}
+                                controls
+                              />
+                            ) : (
+                              <img 
+                                className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-500" 
+                                src={`${api.defaults.baseURL.replace('/api', '')}${file.url}`}
+                                alt={file.originalName}
+                                onClick={() => window.open(`${api.defaults.baseURL.replace('/api', '')}${file.url}`, '_blank')}
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     <div className="flex items-start gap-4">
                       <div className="flex-1">
                         <input

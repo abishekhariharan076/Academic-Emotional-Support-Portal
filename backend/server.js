@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const path = require("path");
 const { Server } = require("socket.io"); // Still required for types if needed, but we'll remove usage
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -45,6 +46,7 @@ app.use(cors(corsOptions));
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Sanitize NoSQL Injection
 app.use((req, res, next) => {

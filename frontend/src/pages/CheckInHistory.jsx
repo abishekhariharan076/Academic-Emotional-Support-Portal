@@ -89,6 +89,29 @@ export default function CheckInHistory() {
                                                 "{item.message}"
                                             </div>
                                         )}
+
+                                        {item.attachments && item.attachments.length > 0 && (
+                                            <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2">
+                                                {item.attachments.map((file, idx) => (
+                                                    <div key={idx} className="relative group rounded-lg overflow-hidden border border-border-light bg-canvas aspect-square">
+                                                        {file.fileType === 'video' ? (
+                                                            <video 
+                                                                className="w-full h-full object-cover" 
+                                                                src={`${api.defaults.baseURL.replace('/api', '')}${file.url}`}
+                                                                controls
+                                                            />
+                                                        ) : (
+                                                            <img 
+                                                                className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-500" 
+                                                                src={`${api.defaults.baseURL.replace('/api', '')}${file.url}`}
+                                                                alt={file.originalName}
+                                                                onClick={() => window.open(`${api.defaults.baseURL.replace('/api', '')}${file.url}`, '_blank')}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

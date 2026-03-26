@@ -12,6 +12,7 @@ export default function CheckIn() {
   const [selectedFactors, setSelectedFactors] = useState([]);
   const [message, setMessage] = useState("");
   const [anonymous, setAnonymous] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState([]);
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,24 +38,46 @@ export default function CheckIn() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (mediaFiles.length + files.length > 5) {
+      setMsg("You can only upload up to 5 files.");
+      return;
+    }
+    setMediaFiles([...mediaFiles, ...files]);
+  };
+
+  const removeFile = (index) => {
+    setMediaFiles(mediaFiles.filter((_, i) => i !== index));
+  };
+
   const submitCheckIn = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMsg("");
 
-    // Combine factors into message since backend doesn't support them natively yet
+    const formData = new FormData();
+    formData.append("moodLevel", moodLevel);
+    formData.append("anonymous", anonymous);
+    
+    // Combine factors into message
     const factorString = selectedFactors.length > 0
       ? `[Factors: ${selectedFactors.join(', ')}]\n\n`
       : "";
-    const finalMessage = factorString + message;
+    formData.append("message", factorString + message);
+
+    mediaFiles.forEach((file) => {
+      formData.append("media", file);
+    });
 
     try {
       await api.post(
         "/checkins",
-        { moodLevel, message: finalMessage, anonymous },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -139,6 +162,51 @@ export default function CheckIn() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
+          </div>
+
+          {/* Step 4: Media Upload */}
+          <div className="space-y-3">
+            <label className="block text-sm font-bold text-text-main uppercase tracking-wide">
+              4. Photos or Videos <span className="text-text-muted font-normal normal-case">(Optional, max 5)</span>
+            </label>
+            <div className="p-4 border-2 border-dashed border-border-light rounded-xl hover:border-primary/50 transition-colors">
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/*"
+                onChange={handleFileChange}
+                className="hidden"
+                id="media-upload"
+              />
+              <label htmlFor="media-upload" className="cursor-pointer flex flex-col items-center justify-center gap-2 py-4">
+                <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                </div>
+                <div className="text-sm font-medium text-text-main">Click to upload media</div>
+                <div className="text-xs text-text-muted">Supports imágenes and videos up to 50MB</div>
+              </label>
+            </div>
+            {mediaFiles.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                {mediaFiles.map((file, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-2 bg-canvas border border-border-light rounded-lg">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="text-primary">
+                        {file.type.startsWith('video') ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        )}
+                      </div>
+                      <span className="text-xs text-text-body truncate">{file.name}</span>
+                    </div>
+                    <button type="button" onClick={() => removeFile(idx)} className="p-1 text-status-error hover:bg-status-error/5 rounded">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Step 4: Privacy */}
