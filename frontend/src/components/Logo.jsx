@@ -19,9 +19,6 @@ const Logo = ({ className = "", type = "full", light = false, align = "center" }
   if (type === "horizontal") {
     return (
       <div className={`flex items-center gap-3 ${className}`}>
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-light font-bold text-lg shadow-sm">
-          AE
-        </div>
         <div className="flex flex-col items-start">
           <span className={`text-xl font-bold tracking-tight ${textColor} leading-none`}>
             AESP

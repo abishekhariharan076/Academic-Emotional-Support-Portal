@@ -190,9 +190,6 @@ export default function AdminDashboard() {
       <header className="border-b border-border-light bg-surface/80 backdrop-blur-md sticky top-0 z-10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <Link to="/" className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-bold text-lg">
-              AE
-            </Link>
             <div>
               <h1 className="text-xl font-bold tracking-tight">Admin Dashboard</h1>
               <p className="text-xs text-text-muted">Welcome, {user?.name || "Admin"}</p>
