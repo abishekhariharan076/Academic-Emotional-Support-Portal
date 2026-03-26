@@ -139,7 +139,7 @@ export default function StudentDashboard() {
               ))}
             </div>
           </div>
-          <Link to="/resources" className="text-sm font-medium text-primary cursor-pointer hover:text-primary-hover">
+          <Link to="/reference" className="text-sm font-medium text-primary cursor-pointer hover:text-primary-hover">
             Browse Library &rarr;
           </Link>
         </Card>

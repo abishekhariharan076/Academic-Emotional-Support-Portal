@@ -197,7 +197,7 @@ export default function CounselorDashboard() {
                       </div>
                       {!isReviewed && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => navigate('/resources')}>
+                          <Button size="sm" variant="outline" onClick={() => navigate('/reference')}>
                             Recommend Resource
                           </Button>
                           <Button size="sm" onClick={() => markReviewed(checkIn._id)}>

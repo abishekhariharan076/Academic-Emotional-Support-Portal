@@ -29,7 +29,7 @@ const Layout = () => {
         { label: 'Check-In', path: '/checkin', icon: 'HeartHandshake' },
         { label: 'Support Requests', path: '/support', icon: 'MessageSquare' },
         { label: 'Reference', path: '/reference', icon: 'BookOpen' },
-        // { label: 'Resources', path: '/resources', icon: 'BookOpen' }, // To be implemented
+        // { label: 'Resources', path: '/reference', icon: 'BookOpen' }, // To be implemented
     ];
 
     const counselorLinks = [
