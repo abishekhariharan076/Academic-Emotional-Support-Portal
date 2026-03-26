@@ -8,9 +8,9 @@ A full-stack MERN-based web application designed to support students through emo
 
 The **Academic Emotional Support Portal** is built to provide a structured platform where students can:
 
-* Submit emotional check-ins
+* Submit emotional check-ins (with photo/video support)
 * Request support from counselors
-* Access mental wellness resources
+* Access mental wellness references
 * Communicate securely within an academic support ecosystem
 
 The system includes role-based access for **Students, Counselors, and Admins**.
@@ -97,14 +97,13 @@ Student Login
 
 ## 📊 Core Features
 
-* Emotional check-in system
+* Emotional check-in system with **Photo & Video support**
 * Anonymous submission option
 * Counselor response dashboard
-* Resource access section
+* **Reference** access section (Academic wellness guides)
 * Analytics dashboard
 * Status tracking for requests
-* **Real-time Live Chat**: Instant messaging between students and counselors using Socket.io.
-* **Domain-Based Filtering**: Institutional isolation ensuring users only chat with others from their own email domain (e.g., `@bitsathy.ac.in`).
+* **Domain-Based Filtering**: Institutional isolation ensuring users only interact with others from their own email domain (e.g., `@university.edu`).
 
 ---
 
@@ -135,7 +134,9 @@ src/
 * userId
 * moodLevel
 * message
+* attachments (Photos/Videos)
 * anonymous
+* domain
 * createdAt
 
 ### SupportRequest
@@ -166,6 +167,12 @@ Currently under development with focus on frontend improvement, workflow integra
 ## 🎯 Final Goal
 
 A practical, scalable, and real-world academic support platform that demonstrates full-stack development, secure system design, and user-centered problem solving.
+
+---
+
+## 📂 Documentation
+
+Detailed implementation details and feature walkthroughs can be found in the [docs](./docs) directory.
 
 ---
 
