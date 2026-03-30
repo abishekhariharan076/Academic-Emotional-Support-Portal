@@ -6,6 +6,7 @@ const supportRequestSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
 
     subject: {
@@ -37,6 +38,7 @@ const supportRequestSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
+      index: true,
     },
 
     counselorReply: {
@@ -58,5 +60,9 @@ const supportRequestSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Indexes
+supportRequestSchema.index({ createdAt: -1 });
+supportRequestSchema.index({ domain: 1, createdAt: -1 });
 
 module.exports = mongoose.model("SupportRequest", supportRequestSchema);

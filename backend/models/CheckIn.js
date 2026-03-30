@@ -6,6 +6,7 @@ const checkInSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     moodLevel: {
       type: Number,
@@ -49,5 +50,9 @@ const checkInSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Indexes
+checkInSchema.index({ createdAt: -1 });
+checkInSchema.index({ domain: 1, createdAt: -1 });
 
 module.exports = mongoose.model("CheckIn", checkInSchema);

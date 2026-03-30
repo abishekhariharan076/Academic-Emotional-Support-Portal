@@ -91,14 +91,22 @@ app.get("/", (req, res) => {
 });
 
 // database connection
-console.log("Attempting to connect to MongoDB...");
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected ✅"))
-  .catch((err) => {
-    console.error("MongoDB error ❌", err.message);
-    console.log("Proceeding without MongoDB connection for now...");
-  });
+const connectWithRetry = () => {
+  console.log("Attempting to connect to MongoDB...");
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log("MongoDB connected ✅"))
+    .catch((err) => {
+      console.error("MongoDB error ❌", err.message);
+      console.log("Retrying in 5 seconds...");
+      setTimeout(connectWithRetry, 5000);
+    });
+};
+
+connectWithRetry();
+
+// Global Error Handler (Must be last)
+app.use(require("./middleware/error.middleware"));
 
 const PORT = process.env.PORT || 5000;
 console.log(`Starting server on port ${PORT}...`);
