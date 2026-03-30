@@ -240,6 +240,9 @@ export default function CounselorDashboard() {
                                 className="w-full h-full object-cover" 
                                 src={getMediaUrl(file.url)}
                                 alt={file.originalName}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = 'https://placehold.co/400x400/f3f4f6/6b7280?text=Image+Missing';
+                                }}
                               />
                             )}
                             <div 
