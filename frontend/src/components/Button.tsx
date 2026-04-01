@@ -21,20 +21,20 @@ const Button: React.FC<ButtonProps & HTMLMotionProps<"button">> = ({
     className = '',
     ...props
 }) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg';
+    const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent disabled:opacity-50 disabled:cursor-not-allowed rounded-full';
 
     const variants: Record<ButtonVariant, string> = {
-        primary: 'bg-primary text-white hover:bg-primary-hover focus:ring-primary',
-        secondary: 'bg-secondary text-white hover:bg-secondary-hover focus:ring-secondary',
-        ghost: 'text-text-body hover:bg-gray-100 hover:text-text-main focus:ring-gray-500',
+        primary: 'bg-primary text-white shadow-lg shadow-primary/15 hover:-translate-y-0.5 hover:bg-primary-hover focus:ring-primary',
+        secondary: 'bg-secondary text-white shadow-lg shadow-secondary/20 hover:-translate-y-0.5 hover:bg-secondary-hover focus:ring-secondary',
+        ghost: 'text-text-body hover:bg-white/80 hover:text-text-main focus:ring-primary/30',
         danger: 'bg-status-error text-white hover:bg-red-600 focus:ring-red-500',
-        outline: 'border-2 border-primary text-primary hover:bg-primary-light focus:ring-primary',
+        outline: 'border border-primary/20 bg-white/70 text-primary hover:bg-primary-light focus:ring-primary',
     };
 
     const sizes: Record<ButtonSize, string> = {
-        sm: 'px-3 py-1.5 text-sm',
-        md: 'px-4 py-2 text-base',
-        lg: 'px-6 py-3 text-lg',
+        sm: 'px-4 py-2 text-sm',
+        md: 'px-5 py-2.5 text-sm',
+        lg: 'px-6 py-3 text-base',
     };
 
     return (

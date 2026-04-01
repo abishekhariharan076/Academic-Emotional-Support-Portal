@@ -1,45 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
-    /* Colors */
-    --color-canvas: #F7F8FA;
-    --color-surface: #FFFFFF;
-
-    --color-primary: #2D5A6E;
-    --color-primary-hover: #244959;
-    --color-primary-light: #D1EAE0;
-
-    --color-secondary: #14B8A6;
-    --color-secondary-hover: #0D9488;
-    --color-secondary-light: #CCFBF1;
-
-    --color-text-main: #111827;
-    --color-text-body: #374151;
-    --color-text-muted: #6B7280;
-
-    --color-border: #E5E7EB;
-    --color-border-light: #F3F4F6;
-
-    --color-status-success: #10B981;
-    --color-status-error: #EF4444;
-    --color-status-warning: #F59E0B;
-    --color-status-info: #3B82F6;
-
-    /* Typography */
-    --font-sans: 'Inter', system-ui, sans-serif;
-
-    /* Radius */
+    --color-canvas: #f4efe6;
+    --color-surface: #fffdf8;
+    --color-surface-strong: #f7f0e4;
+    --color-primary: #244f45;
+    --color-primary-hover: #17362f;
+    --color-primary-light: #d4e6dd;
+    --color-secondary: #d97c54;
+    --color-secondary-hover: #b6603d;
+    --color-secondary-light: #f8ddcf;
+    --color-accent: #f0c36d;
+    --color-text-main: #182126;
+    --color-text-body: #42505a;
+    --color-text-muted: #6f7a81;
+    --color-border: #ddd1bf;
+    --color-border-light: #ece2d3;
+    --color-status-success: #2d8a57;
+    --color-status-error: #c15a4f;
+    --color-status-warning: #b7831a;
+    --color-status-info: #3a7ca5;
+    --font-sans: "Manrope", system-ui, sans-serif;
     --radius-xl: 1rem;
-    --radius-2xl: 1.25rem;
-
-    /* Shadows */
-    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --radius-2xl: 1.5rem;
+    --shadow-soft: 0 18px 40px -28px rgba(24, 33, 38, 0.45);
 }
 
 @layer base {
+    * {
+        @apply border-border;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
     body {
         @apply bg-canvas text-text-body antialiased;
+        background-image:
+            radial-gradient(circle at top left, rgba(217, 124, 84, 0.16), transparent 30%),
+            radial-gradient(circle at top right, rgba(36, 79, 69, 0.14), transparent 28%),
+            linear-gradient(180deg, #fbf6ee 0%, #f4efe6 48%, #efe7d8 100%);
         font-family: var(--font-sans);
+        min-height: 100vh;
+    }
+
+    a {
+        @apply transition-colors;
     }
 
     h1,
@@ -48,12 +56,33 @@
     h4,
     h5,
     h6 {
-        @apply text-text-main font-semibold;
+        @apply text-text-main font-semibold tracking-tight;
+    }
+
+    ::selection {
+        background: rgba(36, 79, 69, 0.18);
+        color: #17362f;
     }
 }
 
 @layer utilities {
     .clip-circle {
         clip-path: circle(50% at 50% 50%);
+    }
+
+    .glass-panel {
+        background: rgba(255, 253, 248, 0.78);
+        backdrop-filter: blur(18px);
+    }
+
+    .section-shell {
+        @apply rounded-[32px] border border-white/60 bg-surface/90 shadow-soft;
+    }
+
+    .mesh-highlight {
+        background:
+            radial-gradient(circle at 20% 20%, rgba(240, 195, 109, 0.4), transparent 26%),
+            radial-gradient(circle at 80% 0%, rgba(217, 124, 84, 0.22), transparent 22%),
+            radial-gradient(circle at 100% 100%, rgba(36, 79, 69, 0.18), transparent 28%);
     }
 }

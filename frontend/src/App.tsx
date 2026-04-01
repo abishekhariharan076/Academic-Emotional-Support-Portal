@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import { AuthProvider } from "./context/AuthContext";
@@ -7,14 +7,14 @@ import { AuthProvider } from "./context/AuthContext";
 // Lazy-loaded pages
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
-const Landing = lazy(() => import("./pages/Landing"));
-const StudentDashboard = lazy(() => import("./pages/StudentDashboard"));
-const CheckIn = lazy(() => import("./pages/CheckIn"));
+const Landing = lazy(() => import("./pages/LandingEnhanced"));
+const StudentDashboard = lazy(() => import("./pages/StudentDashboardEnhanced"));
+const CheckIn = lazy(() => import("./pages/CheckInEnhanced"));
 const CounselorDashboard = lazy(() => import("./pages/CounselorDashboard"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const SupportRequest = lazy(() => import("./pages/SupportRequest"));
-const Resources = lazy(() => import("./pages/Resources"));
+const Resources = lazy(() => import("./pages/ResourcesEnhanced"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const CheckInHistory = lazy(() => import("./pages/CheckInHistory"));
