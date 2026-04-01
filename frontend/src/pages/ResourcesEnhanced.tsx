@@ -204,23 +204,23 @@ export default function ResourcesEnhanced() {
           </div>
         </Card>
 
-        <Card className="border-none bg-primary p-6 text-white">
+        <Card className="border-none bg-[linear-gradient(135deg,#244f45_0%,#1d433a_52%,#17362f_100%)] p-6 text-white">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary-light">Quick support planner</p>
           <h2 className="mt-3 text-2xl font-extrabold text-white">Build a realistic next step in under a minute.</h2>
-          <p className="mt-3 text-sm leading-6 text-white/80">
+          <p className="mt-3 text-sm leading-6 text-white/88">
             Choose what you need, how much energy you have, and how much time is available. The planner will turn that into a short, doable action sequence.
           </p>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">Need</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/78">Need</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {supportNeeds.map((need) => (
                   <button
                     key={need}
                     type="button"
                     onClick={() => setSelectedNeed(need)}
-                    className={`rounded-full px-3 py-2 text-sm font-semibold transition ${selectedNeed === need ? "bg-white text-primary" : "bg-white/10 text-white hover:bg-white/20"}`}
+                    className={`rounded-full border px-3 py-2 text-sm font-semibold transition ${selectedNeed === need ? "border-white bg-white text-primary shadow-sm" : "border-white/18 bg-[#f4efe6] text-text-main hover:border-white/35 hover:bg-white"}`}
                   >
                     {need}
                   </button>
@@ -229,14 +229,14 @@ export default function ResourcesEnhanced() {
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">Energy</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/78">Energy</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {energyLevels.map((energy) => (
                   <button
                     key={energy}
                     type="button"
                     onClick={() => setSelectedEnergy(energy)}
-                    className={`rounded-full px-3 py-2 text-sm font-semibold transition ${selectedEnergy === energy ? "bg-secondary text-white" : "bg-white/10 text-white hover:bg-white/20"}`}
+                    className={`rounded-full border px-3 py-2 text-sm font-semibold transition ${selectedEnergy === energy ? "border-secondary bg-secondary text-white shadow-sm" : "border-white/18 bg-[#f4efe6] text-text-main hover:border-white/35 hover:bg-white"}`}
                   >
                     {energy}
                   </button>
@@ -245,14 +245,14 @@ export default function ResourcesEnhanced() {
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">Time</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/78">Time</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {timeWindows.map((time) => (
                   <button
                     key={time}
                     type="button"
                     onClick={() => setSelectedTime(time)}
-                    className={`rounded-full px-3 py-2 text-sm font-semibold transition ${selectedTime === time ? "bg-accent text-text-main" : "bg-white/10 text-white hover:bg-white/20"}`}
+                    className={`rounded-full border px-3 py-2 text-sm font-semibold transition ${selectedTime === time ? "border-accent bg-accent text-text-main shadow-sm" : "border-white/18 bg-[#f4efe6] text-text-main hover:border-white/35 hover:bg-white"}`}
                   >
                     {time}
                   </button>
@@ -261,15 +261,15 @@ export default function ResourcesEnhanced() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-[28px] bg-white/10 p-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/60">Suggested action path</p>
+          <div className="mt-6 rounded-[28px] border border-white/12 bg-white/12 p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/78">Suggested action path</p>
             <div className="mt-4 space-y-3">
               {plannerSteps.map((step, index) => (
-                <div key={`${selectedNeed}-${selectedEnergy}-${selectedTime}-${index}`} className="flex items-start gap-3 rounded-[22px] bg-white/10 px-4 py-3">
+                <div key={`${selectedNeed}-${selectedEnergy}-${selectedTime}-${index}`} className="flex items-start gap-3 rounded-[22px] bg-white/14 px-4 py-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-primary">
                     {index + 1}
                   </span>
-                  <p className="text-sm leading-6 text-white">{step}</p>
+                  <p className="text-sm leading-6 text-white/92">{step}</p>
                 </div>
               ))}
             </div>
