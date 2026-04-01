@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import Badge from "../components/Badge";
 
 const moods = [
-  { level: 1, label: "Overwhelmed", helper: "Things feel heavy and hard to manage.", accent: "bg-status-error/10 text-status-error border-status-error/20" },
+  { level: 1, label: "Drained", helper: "Things feel heavy and hard to manage.", accent: "bg-status-error/10 text-status-error border-status-error/20" },
   { level: 2, label: "Stressed", helper: "Pressure is building and affecting focus.", accent: "bg-secondary/10 text-secondary border-secondary/20" },
   { level: 3, label: "Steady", helper: "You are managing, but still carrying some strain.", accent: "bg-text-main/8 text-text-main border-text-main/10" },
   { level: 4, label: "Good", helper: "You feel mostly grounded and capable today.", accent: "bg-primary/10 text-primary border-primary/20" },
