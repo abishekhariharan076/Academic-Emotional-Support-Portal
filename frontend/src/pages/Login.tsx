@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, Suspense, lazy } from "react";
+import React, { useState, FormEvent } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -6,12 +6,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import Card from "../components/Card";
 import Logo from "../components/Logo";
-import { CredentialResponse } from "@react-oauth/google";
 import { User } from "../types";
-
-const GoogleLogin = lazy(() =>
-  import("@react-oauth/google").then((module) => ({ default: module.GoogleLogin }))
-);
 
 export default function Login() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID_HERE";
@@ -24,7 +19,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showGoogleLogin, setShowGoogleLogin] = useState(hasGoogleClientId);
 
   // Determine role context from query param (e.g., ?role=counselor)
   const queryParams = new URLSearchParams(location.search);
@@ -53,27 +47,6 @@ export default function Login() {
       } else {
         setMsg(err?.response?.data?.message || "Login failed. Please check your credentials.");
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSuccess = async (response: CredentialResponse) => {
-    setLoading(true);
-    setMsg("");
-    try {
-      const res = await api.post("/auth/google", { tokenId: response.credential });
-      const { token, user } = res.data as { token: string; user: User };
-
-      login(user, token);
-
-      const role = user?.role;
-      if (role === "counselor") navigate("/counselor");
-      else if (role === "admin") navigate("/admin");
-      else navigate("/student");
-    } catch (err: any) {
-      console.error("Google Login Error:", err);
-      setMsg(err?.response?.data?.message || "Google login failed.");
     } finally {
       setLoading(false);
     }
@@ -150,32 +123,8 @@ export default function Login() {
           </div>
 
           {hasGoogleClientId ? (
-            <div className="flex justify-center">
-              {showGoogleLogin ? (
-                <Suspense
-                  fallback={
-                    <div className="rounded-lg bg-surface-strong px-4 py-3 text-sm text-text-muted">
-                      Loading Google sign-in...
-                    </div>
-                  }
-                >
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => {
-                      setShowGoogleLogin(false);
-                      setMsg("Google sign-in is temporarily unavailable. Please use email and password.");
-                    }}
-                    theme="outline"
-                    shape="pill"
-                    size="large"
-                    width="360"
-                  />
-                </Suspense>
-              ) : (
-                <div className="rounded-lg bg-secondary/10 p-3 text-sm font-medium text-text-body">
-                  Google sign-in is temporarily unavailable. Please use email and password.
-                </div>
-              )}
+            <div className="rounded-lg bg-secondary/10 p-3 text-sm font-medium text-text-body">
+              Google sign-in is configured, but it is temporarily disabled here while we stabilize the login page. Please use email and password for now.
             </div>
           ) : (
             <div className="rounded-lg bg-secondary/10 p-3 text-sm font-medium text-text-body">
