@@ -1,0 +1,252 @@
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
+const User = require("../models/User");
+
+const signToken = (user) =>
+  jwt.sign({ id: user._id, role: user.role, email: user.email, domain: user.domain }, process.env.JWT_SECRET, {
+    expiresIn: "24h", // Reduced from 7d to 24h for security
+  });
+
+exports.register = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "name, email, password are required" });
+    }
+
+    // Check database connection status
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK REGISTRATION (DB disconnected)");
+      const mockUser = {
+        _id: "mock_" + Date.now(),
+        name,
+        email,
+        role: ["student", "counselor", "admin"].includes(role) ? role : "student",
+      };
+      const token = signToken(mockUser);
+      return res.status(201).json({
+        token,
+        user: mockUser,
+        message: "Logged in via Mock Mode (Database Offline)",
+      });
+    }
+
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(409).json({ message: "Email already registered" });
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    const domain = email.split("@")[1];
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      role: ["student", "counselor", "admin"].includes(role) ? role : "student",
+      domain
+    });
+
+    const token = signToken(user);
+
+    res.status(201).json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, domain: user.domain },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.login = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "email and password are required" });
+    }
+
+    // Check database connection status
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK LOGIN (DB disconnected)");
+
+      let role = "student";
+      if (email.startsWith("admin")) role = "admin";
+      else if (email.startsWith("counselor")) role = "counselor";
+
+      const mockUser = {
+        _id: "mock_" + role + "_" + Date.now(),
+        name: email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1),
+        email: email,
+        role: role,
+      };
+      const token = signToken(mockUser);
+      return res.json({
+        token,
+        user: mockUser,
+        message: `Logged in as ${role.toUpperCase()} via Mock Mode (Database Offline)`,
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.warn(`SECURITY: Failed login attempt for non-existent email: ${email}`);
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+ 
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) {
+      console.warn(`SECURITY: Failed login attempt for email: ${email}`);
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = signToken(user);
+
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, domain: user.domain },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+const { OAuth2Client } = require("google-auth-library");
+// Initialize with a fallback to prevent crash if env var is missing during startup
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "dummy-id");
+
+exports.googleLogin = async (req, res) => {
+  const { tokenId } = req.body;
+
+  if (!tokenId) {
+    return res.status(400).json({ message: "tokenId is required" });
+  }
+
+  try {
+    // Check database connection status
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK GOOGLE LOGIN (DB disconnected)");
+      const mockUser = {
+        _id: "mock_google_" + Date.now(),
+        name: "Mock Google User",
+        email: "google_user@example.com",
+        role: "student",
+      };
+      const token = signToken(mockUser);
+      return res.json({
+        token,
+        user: mockUser,
+        message: "Logged in via Mock Mode (Database Offline)",
+      });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { name, email, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if not exists
+      const domain = email.split("@")[1];
+      user = await User.create({
+        name,
+        email,
+        password: await bcrypt.hash(Math.random().toString(36).slice(-10), 10), // Random password
+        role: "student", // Default role
+        domain
+      });
+      console.log(`New user created via Google: ${email}`);
+    }
+
+    const token = signToken(user);
+
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, domain: user.domain, picture },
+    });
+  } catch (err) {
+    console.error("Google Login Error:", err.message);
+    res.status(500).json({ message: "Google login failed", error: err.message });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Proceeding with MOCK FORGOT PASSWORD for ${email} (DB disconnected)`);
+      const mockToken = jwt.sign({ id: "mock_id" }, process.env.JWT_SECRET || "mock_secret", { expiresIn: '1h' });
+      return res.json({
+        message: "If that email exists, a reset link has been sent.",
+        debugToken: mockToken
+      });
+    }
+
+    const user = await User.findOne({ email });
+    console.log(`SECURITY: Password reset requested for: ${email}`);
+ 
+    // Always return success for security (don't reveal if email exists)
+    if (!user) {
+      return res.json({ message: "If that email exists, a reset link has been sent." });
+    }
+
+    // Generate a simple token (in a real app, use a crypto library and save to DB)
+    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // MOCK: Log the token to console since we don't have an email service
+    console.log(`[PASSWORD RESET] Token for ${email}: ${resetToken}`);
+
+    res.json({
+      message: "If that email exists, a reset link has been sent.",
+      debugToken: resetToken // Only for development!
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ message: "Token and password are required" });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log("Proceeding with MOCK RESET PASSWORD (DB disconnected)");
+      return res.json({ message: "Password updated successfully (Mock Mode)" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(400).json({ message: "Invalid or expired token", error: err.message });
+  }
+};
