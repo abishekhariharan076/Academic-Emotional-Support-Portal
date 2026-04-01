@@ -153,7 +153,7 @@ export default function CheckInEnhanced() {
                         <span className="text-3xl font-extrabold leading-none">{mood.level}</span>
                         {isActive && <Badge variant="primary" className="shrink-0">Selected</Badge>}
                       </div>
-                      <p className="mt-4 break-words text-lg font-bold leading-tight text-text-main sm:text-xl xl:text-base">
+                      <p className="mt-4 text-base font-bold leading-tight text-text-main sm:text-lg xl:text-[15px] [word-break:normal]">
                         {mood.label}
                       </p>
                     </button>
@@ -283,10 +283,10 @@ export default function CheckInEnhanced() {
             </div>
           </Card>
 
-          <Card className="border-none bg-primary p-6 text-white">
+          <Card className="border-none bg-[linear-gradient(135deg,#244f45_0%,#1d433a_52%,#17362f_100%)] p-6 text-white">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-secondary-light">Need more than a check-in?</p>
             <h2 className="mt-3 text-2xl font-extrabold text-white">Support requests stay one step away.</h2>
-            <p className="mt-3 text-sm leading-6 text-white/80">
+            <p className="mt-3 text-sm leading-6 text-white/88">
               If your stress feels hard to carry alone, you can submit this check-in and then open a counselor request with the same context still fresh in your mind.
             </p>
             <Button type="button" variant="secondary" className="mt-6" onClick={() => navigate("/support")}>
