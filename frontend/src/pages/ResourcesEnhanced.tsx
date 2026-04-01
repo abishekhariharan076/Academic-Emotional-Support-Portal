@@ -177,7 +177,7 @@ export default function ResourcesEnhanced() {
       </section>
 
       <section className="grid gap-8 xl:grid-cols-[0.78fr_1.22fr]">
-        <Card className="border-none bg-white/90">
+        <Card className="self-start border-none bg-white/90">
           <h2 className="text-xl font-extrabold">Find the right kind of help</h2>
           <p className="mt-2 text-sm text-text-muted">Search by topic, then narrow by category.</p>
 
