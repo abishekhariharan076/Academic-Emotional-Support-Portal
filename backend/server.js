@@ -1,7 +1,6 @@
 const express = require("express");
 const http = require("http");
 const path = require("path");
-const { Server } = require("socket.io"); // Still required for types if needed, but we'll remove usage
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -14,25 +13,21 @@ const counselorRoutes = require("./routes/counselor.routes");
 const adminRoutes = require("./routes/admin.routes");
 const supportRoutes = require("./routes/support.routes");
 
-
 require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
-const io = null; // Removed Socket.io
 
-// middleware
-// whitelist for CORS
 const whitelist = [
   "https://academic-emotional-support-portal.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
-  "http://127.0.0.1:5173"
+  "http://127.0.0.1:5173",
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || whitelist.indexOf(origin) !== -1) {
+  origin(origin, callback) {
+    if (!origin || whitelist.includes(origin)) {
       callback(null, true);
     } else {
       console.warn(`Blocked by CORS: ${origin}`);
@@ -43,15 +38,16 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-  contentSecurityPolicy: false,
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: false,
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Sanitize NoSQL Injection
 app.use((req, res, next) => {
   req.body = mongoSanitize(req.body);
   req.query = mongoSanitize(req.query);
@@ -59,18 +55,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate Limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300, // Limit each IP to 300 requests per window (increased from 100)
+  windowMs: 15 * 60 * 1000,
+  max: 300,
   message: { message: "Too many requests, please try again later." },
 });
 
 const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 50, // Increased limit for testing/reliability
+  windowMs: 60 * 60 * 1000,
+  max: 50,
   message: { message: "Too many authentication attempts, please try again in an hour." },
-  skip: (req) => req.method === "OPTIONS", // Don't limit preflight requests
+  skip: (req) => req.method === "OPTIONS",
 });
 
 app.use("/api/auth/login", authLimiter);
@@ -83,25 +78,28 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/support", supportRoutes);
 app.use("/api/reference", require("./routes/resource.routes"));
 
-
-
-// test route
 app.get("/", (req, res) => {
-  res.send("AESP backend running ✅");
+  res.send("AESP backend running");
 });
 
-// database connection
-console.log("Attempting to connect to MongoDB...");
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected ✅"))
-  .catch((err) => {
-    console.error("MongoDB error ❌", err.message);
-    console.log("Proceeding without MongoDB connection for now...");
-  });
+const connectWithRetry = () => {
+  console.log("Attempting to connect to MongoDB...");
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => {
+      console.error("MongoDB error", err.message);
+      console.log("Retrying in 5 seconds...");
+      setTimeout(connectWithRetry, 5000);
+    });
+};
+
+connectWithRetry();
+
+app.use(require("./middleware/error.middleware"));
 
 const PORT = process.env.PORT || 5000;
 console.log(`Starting server on port ${PORT}...`);
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
+  console.log(`Server running on port ${PORT}`);
 });

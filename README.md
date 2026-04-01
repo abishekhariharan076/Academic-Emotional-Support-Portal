@@ -1,181 +1,86 @@
 # Academic Emotional Support Portal
 
-A full-stack MERN-based web application designed to support students through emotional check-ins, support requests, counselor interaction, and resource access in an academic environment.
+A full-stack student support platform for emotional check-ins, counselor requests, wellness resources, and role-based campus workflows.
 
----
+## Overview
 
-## 📌 Project Overview
+The Academic Emotional Support Portal is designed to help students reflect early, ask for help safely, and access practical support resources without leaving the academic environment. The app includes dedicated experiences for students, counselors, and admins.
 
-The **Academic Emotional Support Portal** is built to provide a structured platform where students can:
+## Core Features
 
-* Submit emotional check-ins (with photo/video support)
-* Request support from counselors
-* Access mental wellness references
-* Communicate securely within an academic support ecosystem
+- Private emotional check-ins with optional anonymous mode
+- Support request flow for counselor follow-up
+- Student dashboard with recent trends and action prompts
+- Resource library with category filters and a quick support planner
+- Role-based access control for student, counselor, and admin users
+- Domain-aware data separation for institution-specific workflows
 
-The system includes role-based access for **Students, Counselors, and Admins**.
+## Tech Stack
 
----
+### Frontend
 
-## 🛠️ Tech Stack
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Recharts
+- Framer Motion
 
-### 🌐 Frontend
+### Backend
 
-* React.js (Vite)
-* React Router
-* Axios
-* Tailwind CSS
-* Recharts / Chart.js
-* Context API / Redux
+- Node.js
+- Express
+- MongoDB with Mongoose
+- JWT authentication
+- Express Validator
+- Helmet and rate limiting
 
-### ⚙️ Backend
+## Project Structure
 
-* Node.js
-* Express.js
-* RESTful APIs
-* JWT Authentication
-* bcrypt.js
-* CORS
-* Helmet
-
-### 🗄️ Database
-
-* MongoDB Atlas
-* Mongoose ODM
-
-### ☁️ Deployment
-
-* Frontend: Vercel
-* Backend: Render
-* Database: MongoDB Atlas
-
----
-
-## 🔐 Security Features
-
-* JWT-based authentication
-* Role-based access control
-* Secure password hashing
-* Input validation and sanitization
-* Optional anonymous submissions
-
----
-
-## 👥 User Roles
-
-### Student
-
-* Emotional check-in submission
-* Support request creation
-* View previous submissions
-
-### Counselor
-
-* View student requests
-* Respond to support cases
-* Update request status
-
-### Admin
-
-* Manage users
-* View system analytics
-* Monitor overall activity
-
----
-
-## 🔁 System Workflow
-
-Student Login
-→ Submit emotional check-in / support request
-→ Backend processes data
-→ MongoDB stores records
-→ Counselor dashboard displays requests
-→ Counselor responds
-→ Student receives support and resources
-
----
-
-## 📊 Core Features
-
-* Emotional check-in system with **Photo & Video support**
-* Anonymous submission option
-* Counselor response dashboard
-* **Reference** access section (Academic wellness guides)
-* Analytics dashboard
-* Status tracking for requests
-* **Domain-Based Filtering**: Institutional isolation ensuring users only interact with others from their own email domain (e.g., `@university.edu`).
-
----
-
-## 📁 Project Structure
-
-```bash
-src/
- ┣ components/
- ┣ pages/
- ┣ context/
- ┣ services/
- ┣ utils/
+```text
+backend/
+frontend/
+docs/
 ```
 
----
+## Local Setup
 
-## 🧩 MongoDB Schema
+### 1. Install dependencies
 
-### User
+```bash
+cd backend
+npm install
 
-* name
-* email
-* role
-* password
+cd ../frontend
+npm install
+```
 
-### CheckIn
+### 2. Configure environment variables
 
-* userId
-* moodLevel
-* message
-* attachments (Photos/Videos)
-* anonymous
-* domain
-* createdAt
+Use the example files as a starting point:
 
-### SupportRequest
+- `backend/.env.example`
+- `frontend/.env.example`
 
-* studentId
-* counselorId
-* status
-* messages[]
+### 3. Run the app
 
----
+```bash
+# terminal 1
+cd backend
+npm run dev
 
-## 🔍 Future Enhancements
+# terminal 2
+cd frontend
+npm run dev
+```
 
-* Appointment booking
-* Email notifications
-* Dark mode
-* Emergency helpline section
-* AI-based sentiment tagging
+## Recent Enhancements
 
----
+- Recovered and cleaned a partially merged TypeScript frontend
+- Improved validation and indexing across backend routes and models
+- Added a quick support planner to the resource library
+- Refreshed the landing, dashboard, check-in, and resource experiences
 
-## 🚀 Project Status
+## Documentation
 
-Currently under development with focus on frontend improvement, workflow integration, and secure backend functionality.
-
----
-
-## 🎯 Final Goal
-
-A practical, scalable, and real-world academic support platform that demonstrates full-stack development, secure system design, and user-centered problem solving.
-
----
-
-## 📂 Documentation
-
-Detailed implementation details and feature walkthroughs can be found in the [docs](./docs) directory.
-
----
-
-## 📌 Author
-
-**Abishek Hariharan**
+Additional notes are available in [docs](./docs).

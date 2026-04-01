@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const institutionRequestSchema = new mongoose.Schema(
   {
     institutionName: { type: String, required: true, trim: true },
-    domain: { type: String, required: true, lowercase: true, trim: true },
+    domain: { type: String, required: true, lowercase: true, trim: true, index: true },
     contactEmail: { type: String, required: true, lowercase: true, trim: true },
     message: { type: String, required: true },
     status: {
@@ -19,5 +19,7 @@ const institutionRequestSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+institutionRequestSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("InstitutionRequest", institutionRequestSchema);
