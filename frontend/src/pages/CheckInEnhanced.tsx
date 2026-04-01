@@ -154,7 +154,6 @@ export default function CheckInEnhanced() {
                         {isActive && <Badge variant="primary">Selected</Badge>}
                       </div>
                       <p className="mt-4 font-bold text-text-main">{mood.label}</p>
-                      <p className="mt-2 text-sm leading-6 text-text-body">{mood.helper}</p>
                     </button>
                   );
                 })}
