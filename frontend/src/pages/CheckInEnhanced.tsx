@@ -147,13 +147,15 @@ export default function CheckInEnhanced() {
                       key={mood.level}
                       type="button"
                       onClick={() => setMoodLevel(mood.level)}
-                      className={`rounded-[26px] border p-4 text-left transition-all ${isActive ? `${mood.accent} scale-[1.01] shadow-soft` : "border-border-light bg-surface hover:border-primary/25 hover:bg-surface-strong"}`}
+                      className={`min-w-0 rounded-[26px] border p-4 text-left transition-all ${isActive ? `${mood.accent} scale-[1.01] shadow-soft` : "border-border-light bg-surface hover:border-primary/25 hover:bg-surface-strong"}`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-3xl font-extrabold">{mood.level}</span>
-                        {isActive && <Badge variant="primary">Selected</Badge>}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-3xl font-extrabold leading-none">{mood.level}</span>
+                        {isActive && <Badge variant="primary" className="shrink-0">Selected</Badge>}
                       </div>
-                      <p className="mt-4 font-bold text-text-main">{mood.label}</p>
+                      <p className="mt-4 break-words text-lg font-bold leading-tight text-text-main sm:text-xl xl:text-base">
+                        {mood.label}
+                      </p>
                     </button>
                   );
                 })}
