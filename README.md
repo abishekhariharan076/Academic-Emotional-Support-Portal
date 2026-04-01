@@ -62,6 +62,25 @@ Use the example files as a starting point:
 - `backend/.env.example`
 - `frontend/.env.example`
 
+Google sign-in requires the same OAuth client ID in both apps:
+
+```env
+# frontend/.env
+VITE_API_URL=http://localhost:5000/api
+VITE_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+```
+
+```env
+# backend/.env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/aesp
+JWT_SECRET=your_jwt_secret_here
+NODE_ENV=development
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+```
+
+For local development, add `http://localhost:5173` and `http://127.0.0.1:5173` to your Google OAuth client's authorized JavaScript origins.
+
 ### 3. Run the app
 
 ```bash

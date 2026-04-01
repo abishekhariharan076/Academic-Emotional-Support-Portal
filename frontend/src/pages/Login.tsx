@@ -10,6 +10,9 @@ import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { User } from "../types";
 
 export default function Login() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID_HERE";
+  const hasGoogleClientId =
+    googleClientId !== "YOUR_GOOGLE_CLIENT_ID_HERE" && googleClientId.trim().length > 0;
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
@@ -141,17 +144,23 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => setMsg("Google Login Failed")}
-              useOneTap
-              theme="outline"
-              shape="pill"
-              size="large"
-              width="360"
-            />
-          </div>
+          {hasGoogleClientId ? (
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setMsg("Google Login Failed")}
+                useOneTap
+                theme="outline"
+                shape="pill"
+                size="large"
+                width="360"
+              />
+            </div>
+          ) : (
+            <div className="rounded-lg bg-secondary/10 p-3 text-sm font-medium text-text-body">
+              Google sign-in is not configured yet. Add `VITE_GOOGLE_CLIENT_ID` in the frontend env file to enable it.
+            </div>
+          )}
 
           <p className="text-center text-sm text-text-muted">
             Don't have an account?{" "}
