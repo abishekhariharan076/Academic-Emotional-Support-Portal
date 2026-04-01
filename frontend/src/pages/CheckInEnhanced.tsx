@@ -153,7 +153,7 @@ export default function CheckInEnhanced() {
                         <span className="text-3xl font-extrabold leading-none">{mood.level}</span>
                         {isActive && <Badge variant="primary" className="shrink-0">Selected</Badge>}
                       </div>
-                      <p className="mt-4 text-base font-bold leading-tight text-text-main sm:text-lg xl:text-[15px] [word-break:normal]">
+                      <p className="mt-4 text-sm font-bold leading-tight text-text-main sm:text-[15px] xl:text-sm [word-break:normal]">
                         {mood.label}
                       </p>
                     </button>
