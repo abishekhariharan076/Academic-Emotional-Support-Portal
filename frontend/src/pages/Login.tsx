@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, Suspense, lazy } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -6,8 +6,12 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import Card from "../components/Card";
 import Logo from "../components/Logo";
-import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { CredentialResponse } from "@react-oauth/google";
 import { User } from "../types";
+
+const GoogleLogin = lazy(() =>
+  import("@react-oauth/google").then((module) => ({ default: module.GoogleLogin }))
+);
 
 export default function Login() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID_HERE";
@@ -20,6 +24,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showGoogleLogin, setShowGoogleLogin] = useState(hasGoogleClientId);
 
   // Determine role context from query param (e.g., ?role=counselor)
   const queryParams = new URLSearchParams(location.search);
@@ -146,15 +151,31 @@ export default function Login() {
 
           {hasGoogleClientId ? (
             <div className="flex justify-center">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => setMsg("Google Login Failed")}
-                useOneTap
-                theme="outline"
-                shape="pill"
-                size="large"
-                width="360"
-              />
+              {showGoogleLogin ? (
+                <Suspense
+                  fallback={
+                    <div className="rounded-lg bg-surface-strong px-4 py-3 text-sm text-text-muted">
+                      Loading Google sign-in...
+                    </div>
+                  }
+                >
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => {
+                      setShowGoogleLogin(false);
+                      setMsg("Google sign-in is temporarily unavailable. Please use email and password.");
+                    }}
+                    theme="outline"
+                    shape="pill"
+                    size="large"
+                    width="360"
+                  />
+                </Suspense>
+              ) : (
+                <div className="rounded-lg bg-secondary/10 p-3 text-sm font-medium text-text-body">
+                  Google sign-in is temporarily unavailable. Please use email and password.
+                </div>
+              )}
             </div>
           ) : (
             <div className="rounded-lg bg-secondary/10 p-3 text-sm font-medium text-text-body">
