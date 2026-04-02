@@ -183,7 +183,7 @@ export default function StudentDashboardEnhanced() {
         </Card>
       </section>
 
-      <section className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+      <section className="grid items-start gap-8 xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="border-none bg-white/90">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
