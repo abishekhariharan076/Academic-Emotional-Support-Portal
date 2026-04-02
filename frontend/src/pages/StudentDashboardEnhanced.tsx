@@ -183,41 +183,70 @@ export default function StudentDashboardEnhanced() {
         </Card>
       </section>
 
-      <section className="grid items-start gap-8 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="border-none bg-white/90">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-2xl font-extrabold">Well-being trend</h2>
-              <p className="mt-2 text-sm text-text-muted">Use your recent entries to notice drift, recovery, or pressure building over time.</p>
-            </div>
-            <div className="flex rounded-full bg-surface-strong p-1">
-              <button
-                type="button"
-                onClick={() => setRange("7D")}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${range === "7D" ? "bg-white text-primary shadow-soft" : "text-text-muted"}`}
-              >
-                7 days
-              </button>
-              <button
-                type="button"
-                onClick={() => setRange("30D")}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${range === "30D" ? "bg-white text-primary shadow-soft" : "text-text-muted"}`}
-              >
-                30 days
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            {chartData.length ? (
-              <MoodTrendChart data={chartData} />
-            ) : (
-              <div className="flex h-[300px] items-center justify-center rounded-[24px] border border-dashed border-border bg-surface-strong text-sm text-text-muted">
-                Add a few check-ins to unlock your mood trend.
+      <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-5">
+          <Card className="border-none bg-white/90">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-2xl font-extrabold">Well-being trend</h2>
+                <p className="mt-2 text-sm text-text-muted">Use your recent entries to notice drift, recovery, or pressure building over time.</p>
               </div>
-            )}
-          </div>
-        </Card>
+              <div className="flex rounded-full bg-surface-strong p-1">
+                <button
+                  type="button"
+                  onClick={() => setRange("7D")}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${range === "7D" ? "bg-white text-primary shadow-soft" : "text-text-muted"}`}
+                >
+                  7 days
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRange("30D")}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${range === "30D" ? "bg-white text-primary shadow-soft" : "text-text-muted"}`}
+                >
+                  30 days
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              {chartData.length ? (
+                <MoodTrendChart data={chartData} />
+              ) : (
+                <div className="flex h-[300px] items-center justify-center rounded-[24px] border border-dashed border-border bg-surface-strong text-sm text-text-muted">
+                  Add a few check-ins to unlock your mood trend.
+                </div>
+              )}
+            </div>
+          </Card>
+
+          <Card className="border-none bg-white/90">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-extrabold">Available counselors</h2>
+                <p className="mt-1 text-sm text-text-muted">People in your campus support network.</p>
+              </div>
+              <Badge variant="primary">{counselors.length} available</Badge>
+            </div>
+            <div className="mt-5 space-y-3">
+              {counselors.length === 0 ? (
+                <div className="rounded-[24px] bg-surface-strong p-5 text-sm text-text-muted">
+                  No counselors are listed yet for your domain.
+                </div>
+              ) : (
+                counselors.map((counselor) => (
+                  <div key={counselor.id} className="flex items-center justify-between rounded-[24px] border border-border-light bg-surface p-4">
+                    <div>
+                      <p className="font-semibold text-text-main">{counselor.name}</p>
+                      <p className="mt-1 text-sm text-text-muted">Available for supportive follow-up</p>
+                    </div>
+                    <div className="h-3 w-3 rounded-full bg-status-success" />
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+        </div>
 
         <div className="space-y-5">
           <div
@@ -268,36 +297,6 @@ export default function StudentDashboardEnhanced() {
               )}
             </div>
           </Card>
-        </div>
-      </section>
-
-      <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
-        <Card className="border-none bg-white/90">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-extrabold">Available counselors</h2>
-              <p className="mt-1 text-sm text-text-muted">People in your campus support network.</p>
-            </div>
-            <Badge variant="primary">{counselors.length} available</Badge>
-          </div>
-          <div className="mt-5 space-y-3">
-            {counselors.length === 0 ? (
-              <div className="rounded-[24px] bg-surface-strong p-5 text-sm text-text-muted">
-                No counselors are listed yet for your domain.
-              </div>
-            ) : (
-              counselors.map((counselor) => (
-                <div key={counselor.id} className="flex items-center justify-between rounded-[24px] border border-border-light bg-surface p-4">
-                  <div>
-                    <p className="font-semibold text-text-main">{counselor.name}</p>
-                    <p className="mt-1 text-sm text-text-muted">Available for supportive follow-up</p>
-                  </div>
-                  <div className="h-3 w-3 rounded-full bg-status-success" />
-                </div>
-              ))
-            )}
-          </div>
-        </Card>
 
         <Card className="border-none bg-white/90">
           <div className="flex items-center justify-between">
