@@ -70,7 +70,7 @@ exports.reviewCheckIn = async (req, res) => {
 
 exports.getStudents = async (req, res) => {
   try {
-    const counselorDomain = req.user.email.split("@")[1];
+    const counselorDomain = req.user.domain || req.user.email?.split("@")[1];
 
     if (mongoose.connection.readyState !== 1) {
       console.log("Proceeding with MOCK STUDENTS (DB disconnected)");
@@ -83,8 +83,13 @@ exports.getStudents = async (req, res) => {
 
     const students = await User.find({
       role: "student",
-      domain: counselorDomain
-    }).select("name email domain");
+      $or: [
+        { assignedCounselor: req.user.id },
+        { domain: counselorDomain },
+      ],
+    })
+      .select("name email domain assignedCounselor")
+      .sort({ name: 1 });
 
     res.json(students);
   } catch (err) {
