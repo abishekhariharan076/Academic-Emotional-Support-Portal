@@ -220,14 +220,17 @@ export default function StudentDashboardEnhanced() {
         </Card>
 
         <div className="space-y-5">
-          <Card className="border-none bg-primary p-6 text-white">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85">Recommended next step</p>
-            <h2 className="mt-4 text-2xl font-extrabold text-white">{recommendation.title}</h2>
-            <p className="mt-3 text-sm leading-6 text-white/95">{recommendation.text}</p>
+          <div
+            className="rounded-[28px] border p-6 shadow-soft"
+            style={{ background: "#fff8ef", borderColor: "#eadbc8", color: "#182126" }}
+          >
+            <p className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: "#8a5a45" }}>Recommended next step</p>
+            <h2 className="mt-4 text-2xl font-extrabold" style={{ color: "#182126" }}>{recommendation.title}</h2>
+            <p className="mt-3 text-sm leading-6" style={{ color: "#42505a" }}>{recommendation.text}</p>
             <Link to={recommendation.action} className="mt-6 inline-block">
               <Button variant="secondary">{recommendation.cta}</Button>
             </Link>
-          </Card>
+          </div>
 
           <Card className="border-none bg-white/90">
             <div className="flex items-center justify-between">
