@@ -221,9 +221,9 @@ export default function StudentDashboardEnhanced() {
 
         <div className="space-y-5">
           <Card className="border-none bg-primary p-6 text-white">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary-light">Recommended next step</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85">Recommended next step</p>
             <h2 className="mt-4 text-2xl font-extrabold text-white">{recommendation.title}</h2>
-            <p className="mt-3 text-sm leading-6 text-white/80">{recommendation.text}</p>
+            <p className="mt-3 text-sm leading-6 text-white/95">{recommendation.text}</p>
             <Link to={recommendation.action} className="mt-6 inline-block">
               <Button variant="secondary">{recommendation.cta}</Button>
             </Link>
